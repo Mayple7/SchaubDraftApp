@@ -26,6 +26,7 @@ public enum DrafterEnum
 
 public enum DraftState
 {
+	DraftStopped,
 	DraftPaused,
 	AnimateToNextDrafter,
 	CountdownPickTimer,
@@ -123,7 +124,7 @@ public class DraftTimerScript : MonoBehaviour
 	public GameObject PickLabel;
 	public GameObject ReleaseKeeperButton;
 
-	private DraftState currentDraftState = DraftState.DraftPaused;
+	private DraftState currentDraftState = DraftState.DraftStopped;
 	private DraftState previousDraftState = DraftState.AnimateToNextDrafter;
 
 	public GameObject draftOrderTickerTemplate;
@@ -172,7 +173,7 @@ public class DraftTimerScript : MonoBehaviour
 		var tempObj = Instantiate(draftOrderTickerTemplate);
 		draftOrderTicker = tempObj.GetComponent<DraftOrderTicker>();
 
-		for (int i = 0; i < draftOrderTicker.GetMaxNameplates(); ++i)
+		for (int i = 0; i < draftOrderTicker.maxNameplates; ++i)
 		{
 			draftOrderTicker.AddNameplateToTicker(pickInfo[tickerRound][tickerPick].drafterID);
 
@@ -206,7 +207,8 @@ public class DraftTimerScript : MonoBehaviour
 
 	public void BeginDraft()
 	{
-		GameObject.Find("BeginDraftButton").transform.DOMoveY(-10, animationTime);
+		GameObject.Find("BeginDraftButton").GetComponent<BeginDraftButton>().Hide();
+		GameObject.Find("PauseButton").GetComponent<PauseButton>().Show();
 
 		RoundLabel.transform.DOMoveX(-5.6f, animationTime);
 		PickLabel.transform.DOMoveX(-5.6f, animationTime);
@@ -222,6 +224,7 @@ public class DraftTimerScript : MonoBehaviour
   {
 		switch(currentDraftState)
 		{
+			case DraftState.DraftStopped:
 			case DraftState.DraftPaused:
 				break;
 			case DraftState.AnimateToNextDrafter:
@@ -255,6 +258,7 @@ public class DraftTimerScript : MonoBehaviour
 
 	private float endingNameplateX = -11.0f;
 	public float animationTime = 2.0f;
+	public float quickAnimationTime = 0.5f;
 
 	private float currentAnimationTime = 0;
 
@@ -435,6 +439,12 @@ public class DraftTimerScript : MonoBehaviour
 	// Pick has been confirmed with button press
 	public void PickConfirmed()
 	{
+		// Don't activate if not in pick is in state
+		if (currentDraftState != DraftState.ThePickIsIn)
+		{
+			return;
+		}
+
 		// Grab the pick text and clear the textbox.
 		pickInfo[currentRound][currentPick].playerPicked = textBoxObject.GetComponent<InputField>().text;
 		pickHistoryTicker.GetComponent<PickHistoryTicker>().AddPickToHistory(pickInfo[currentRound][currentPick].playerPicked);
@@ -493,7 +503,14 @@ public class DraftTimerScript : MonoBehaviour
 		GoToDraftState(DraftState.AnimateToNextDrafter);
 	}
 
-	private void GoToDraftState(DraftState newDraftState)
+	public void SwapDraftState()
+	{
+		DraftState temp = previousDraftState;
+		previousDraftState = currentDraftState;
+		currentDraftState = temp;
+	}
+
+	public void GoToDraftState(DraftState newDraftState)
 	{
 		previousDraftState = currentDraftState;
 		currentDraftState = newDraftState;
@@ -550,6 +567,7 @@ public class DraftTimerScript : MonoBehaviour
 	{
 		GameObject.Find("ExitDraftButton").GetComponent<ExitDraftButton>().Show();
 		GameObject.Find("TickerBackground").transform.DOMoveY(10, animationTime);
+		GameObject.Find("PauseButton").GetComponent<PauseButton>().Hide();
 
 		// Hide the text
 		RoundLabel.transform.DOMoveX(-12, animationTime);

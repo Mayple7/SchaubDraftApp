@@ -5,21 +5,22 @@ using DG.Tweening;
 
 public class ReleaseKeeperButton : MonoBehaviour
 {
+	// Sprites for button states
 	public Sprite defaultSprite;
 	public Sprite hoverSprite;
 	public Sprite clickSprite;
-
-	public float AnimationTime = 0.5f;
-
+	
+	// Button positions
 	private Vector3 DisplayPosition = new Vector3(-5.7f, -1.5f, 0);
 	private Vector3 HiddenPosition = new Vector3(-13, -1.5f, 0);
 
+	// Reference to the main script
 	private DraftTimerScript timerScript;
 
 	// Use this for initialization
 	void Start()
 	{
-
+		timerScript = GameObject.Find("DraftTimer").GetComponent<DraftTimerScript>();
 	}
 
 	// Update is called once per frame
@@ -30,39 +31,28 @@ public class ReleaseKeeperButton : MonoBehaviour
 
 	public void Show()
 	{
-		this.transform.DOMove(DisplayPosition, AnimationTime);
+		this.transform.DOMove(DisplayPosition, timerScript.animationTime);
 	}
 
 	public void Hide()
 	{
-		this.transform.DOMove(HiddenPosition, AnimationTime);
+		this.transform.DOMove(HiddenPosition, timerScript.animationTime);
 	}
 
-	// Right button down
 	void OnMouseEnter()
 	{
-		if (gameObject.GetComponent<SpriteRenderer>().enabled)
-		{
-			this.GetComponent<SpriteRenderer>().sprite = hoverSprite;
-		}
+		this.GetComponent<SpriteRenderer>().sprite = hoverSprite;
 	}
 
 	void OnMouseDown()
 	{
-		if (gameObject.GetComponent<SpriteRenderer>().enabled)
-		{
-			this.GetComponent<SpriteRenderer>().sprite = clickSprite;
-		}
+		this.GetComponent<SpriteRenderer>().sprite = clickSprite;
 	}
 
+	// Button activated
 	private void OnMouseUpAsButton()
 	{
 		this.GetComponent<SpriteRenderer>().sprite = hoverSprite;
-
-		if (!timerScript)
-		{
-			timerScript = GameObject.Find("DraftTimer").GetComponent<DraftTimerScript>();
-		}
 
 		// Notify our timer script that the pick has been confirmed
 		timerScript.ReleaseKeeper();
