@@ -17,8 +17,8 @@ public class PauseButton : MonoBehaviour
 	private Sprite currentHoverSprite;
 
 	// Button positions
-	private Vector3 DisplayPosition = new Vector3(8.25f, -4.35f, 0);
-	private Vector3 HiddenPosition = new Vector3(8.25f, -6, 0);
+	private Vector3 DisplayPosition = new Vector3(8.5f, -4.0f, 0);
+	private Vector3 HiddenPosition = new Vector3(8.5f, -5.5f, 0);
 
 	// Reference to the main script
 	private DraftTimerScript timerScript;

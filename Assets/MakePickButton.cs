@@ -11,8 +11,8 @@ public class MakePickButton : MonoBehaviour
 	public Sprite clickSprite;
 
 	// Button positions
-	private Vector3 DisplayPosition = new Vector3(0, -3, 0);
-	private Vector3 HiddenPosition = new Vector3(0, -6, 0);
+	private Vector3 DisplayPosition = new Vector3(0, -3, 100);
+	private Vector3 HiddenPosition = new Vector3(0, -6, 100);
 
 	// Reference to the main script
 	private DraftTimerScript timerScript;
