@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +28,8 @@ public enum DrafterEnum
 public enum DraftState
 {
 	DraftStopped,
+	AnimateToNextContract,
+	ContractManagement,
 	DraftPaused,
 	AnimateToNextDrafter,
 	CountdownPickTimer,
@@ -37,10 +40,25 @@ public enum DraftState
 
 public class PlayerProfile
 {
+	public string playerName;
+
   public Sprite playerNameplate;
   public float bonusTimeRemaining;
 
 	public float totalTimeUsed = 0;
+
+	// Holds old contracted players
+	public List<string> oldThreeYearContracts;
+	public List<string> oldTwoYearContracts;
+	public List<string> oldOneYearContracts;
+
+	// Holds newly contracted players
+	public List<string> threeYearContracts;
+	public List<string> twoYearContracts;
+	public List<string> oneYearContracts;
+
+	// Simple list for all player picks
+	public List<string> allPlayerPicks;
 }
 
 public class PickInfo
@@ -131,6 +149,7 @@ public class DraftTimerScript : MonoBehaviour
 	private DraftOrderTicker draftOrderTicker;
 
 	public GameObject pickHistoryTicker;
+	public GameObject draftStatusText;
 
 	private Text pickTimerText;
 
@@ -142,9 +161,23 @@ public class DraftTimerScript : MonoBehaviour
     for(int i = 0; i < (int)DrafterEnum.TotalDrafters; ++i)
     {
       playerProfiles[i] = new PlayerProfile();
+			playerProfiles[i].playerName = DrafterNames[i];
       playerProfiles[i].bonusTimeRemaining = maxBonusTime;
       playerProfiles[i].playerNameplate = nameplateSprites[i];
-    }
+
+			playerProfiles[i].oldThreeYearContracts = new List<string>();
+			playerProfiles[i].oldTwoYearContracts = new List<string>();
+			playerProfiles[i].oldOneYearContracts = new List<string>();
+
+			playerProfiles[i].threeYearContracts = new List<string>();
+			playerProfiles[i].twoYearContracts = new List<string>();
+			playerProfiles[i].oneYearContracts = new List<string>();
+
+			playerProfiles[i].allPlayerPicks = new List<string>();
+		}
+
+		// Import the previous year's contracts
+		ImportContractPlayers();
 
     // Create the pick info structures
     int draftSnake = 1;
@@ -217,6 +250,8 @@ public class DraftTimerScript : MonoBehaviour
 		makePickButton.transform.DOMoveY(-3, animationTime);
 
 		GoToDraftState(DraftState.AnimateToNextDrafter);
+
+		UpdateLabels();
 	}
 	
 	// Update is called once per frame
@@ -523,6 +558,22 @@ public class DraftTimerScript : MonoBehaviour
 			RoundLabel.GetComponent<Text>().text = "Round: " + (currentRound + 1);
 			PickLabel.GetComponent<Text>().text = "Pick: " + (currentPick + 1);
 		}
+
+		switch (currentDraftState)
+		{
+			case DraftState.AnimateToNextDrafter:
+			case DraftState.CountdownPickTimer:
+			case DraftState.CountdownBonusTimer:
+			case DraftState.ThePickIsIn:
+				draftStatusText.GetComponent<Text>().text = "Drafting. Round: " + (currentRound + 1) + " Pick: " + (currentPick + 1);
+				break;
+			case DraftState.DraftPaused:
+				draftStatusText.GetComponent<Text>().text = "Paused. Round: " + (currentRound + 1) + " Pick: " + (currentPick + 1);
+				break;
+			default:
+				draftStatusText.GetComponent<Text>().text = "Drafting. Round: " + (currentRound + 1) + " Pick: " + (currentPick + 1);
+				break;
+		}
 	}
 
 	// Returns true if draft is over
@@ -574,6 +625,7 @@ public class DraftTimerScript : MonoBehaviour
 		PickLabel.transform.DOMoveX(-12, animationTime);
 		pickTimerText.transform.DOMoveY(-10, animationTime);
 		TimerStateOverlay.transform.DOMoveY(-8, animationTime);
+		draftStatusText.transform.DOMoveY(10, animationTime);
 
 		ReleaseKeeperButton.GetComponent<ReleaseKeeperButton>().Hide();
 
@@ -624,6 +676,55 @@ public class DraftTimerScript : MonoBehaviour
 
     writer.Close();
   }
+
+	public void ImportContractPlayers()
+	{
+		print("Importing Contract Players...");
+		string filename = "/Contracts" + (DateTime.Now.Year - 1) + ".txt";
+		string filepath = Application.persistentDataPath + filename;
+
+		// No Importing of contracts if the file does not exist
+		if(!File.Exists(filepath))
+		{
+			print(filepath + " does not exist!");
+			return;
+		}
+
+		StreamReader reader = new StreamReader(filepath);
+		while(!reader.EndOfStream)
+		{
+			string contractLine = reader.ReadLine();
+			string[] contractFields = contractLine.Split(':');
+
+			foreach(PlayerProfile profile in playerProfiles)
+			{
+				// Find the correct profile (should be ordered but just in case)
+				if (profile.playerName == contractFields[0])
+				{
+					foreach(string contract in contractFields)
+					{
+						if(contract.Contains("*3"))
+						{
+							profile.oldThreeYearContracts.Add(contract.TrimEnd('*', '3'));
+						}
+						else if(contract.Contains("*2"))
+						{
+							profile.oldTwoYearContracts.Add(contract.TrimEnd('*', '2'));
+						}
+						else if(contract.Contains("*1"))
+						{
+							profile.oldOneYearContracts.Add(contract.TrimEnd('*', '1'));
+						}
+						else
+						{
+							print("Contract Filtered: " + contract);
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
 
 	public DrafterEnum[] GetDraftOrder()
 	{
@@ -678,17 +779,17 @@ public class DraftTimerScript : MonoBehaviour
 			{
 				// Set up the timer for the next bar
 				barSpawningTimer = 0;
-				nextBarSpawnTime = Random.Range(minBarSpawningTime, maxBarSpawningTime);
+				nextBarSpawnTime = UnityEngine.Random.Range(minBarSpawningTime, maxBarSpawningTime);
 
 				for(int i = 0; i < 4; ++i)
 				{
 					FinishedBar newBar = new FinishedBar();
-					float barScale = Random.Range(minBarScale, maxBarScale);
-					float barHeight = Random.Range(minBarHeight, maxBarHeight);
+					float barScale = UnityEngine.Random.Range(minBarScale, maxBarScale);
+					float barHeight = UnityEngine.Random.Range(minBarHeight, maxBarHeight);
 					newBar.barObject = Instantiate(FinishedBarTemplate, new Vector3(-21, barHeight, 1), Quaternion.identity);
 					newBar.barObject.transform.localScale = new Vector3(barScale, barScale);
-					newBar.barObject.GetComponent<SpriteRenderer>().color = new Color(0, 0.7764f + Random.Range(-0.2f, 0.2f), 0.6117f + Random.Range(-0.2f, 0.2f), 0.5f);
-					newBar.timeAlive = Random.Range(minBarTime, maxBarTime);
+					newBar.barObject.GetComponent<SpriteRenderer>().color = new Color(0, 0.7764f + UnityEngine.Random.Range(-0.2f, 0.2f), 0.6117f + UnityEngine.Random.Range(-0.2f, 0.2f), 0.5f);
+					newBar.timeAlive = UnityEngine.Random.Range(minBarTime, maxBarTime);
 					finishedBarList.Add(newBar);
 					newBar.barObject.transform.DOMoveX(21, newBar.timeAlive);
 				}
