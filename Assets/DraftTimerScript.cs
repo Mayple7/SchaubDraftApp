@@ -28,7 +28,6 @@ public enum DrafterEnum
 public enum DraftState
 {
 	DraftStopped,
-	AnimateToNextContract,
 	ContractManagement,
 	DraftPaused,
 	AnimateToNextDrafter,
@@ -46,6 +45,8 @@ public class PlayerProfile
   public float bonusTimeRemaining;
 
 	public float totalTimeUsed = 0;
+
+	public int totalContractedPlayers = 0;
 
 	// Holds old contracted players
 	public List<string> oldThreeYearContracts;
@@ -111,6 +112,8 @@ public class DraftTimerScript : MonoBehaviour
 	public Color ringGreen;
 	public Color ringYellow;
 	public Color ringRed;
+	public Color ringBlue;
+	public Color ringOther;
 	private float ringRValue = 1;
 	private float ringGValue = 1;
 	private float ringBValue = 1;
@@ -138,9 +141,8 @@ public class DraftTimerScript : MonoBehaviour
 	private int tickerRound = 0;
 	private int tickerPick = 0;
 
-	public GameObject RoundLabel;
-	public GameObject PickLabel;
 	public GameObject ReleaseKeeperButton;
+	public GameObject ContractFlowControl;
 
 	private DraftState currentDraftState = DraftState.DraftStopped;
 	private DraftState previousDraftState = DraftState.AnimateToNextDrafter;
@@ -241,10 +243,16 @@ public class DraftTimerScript : MonoBehaviour
 	public void BeginDraft()
 	{
 		GameObject.Find("BeginDraftButton").GetComponent<BeginDraftButton>().Hide();
+
+		ContractFlowControl.GetComponent<ContractPlayerScript>().GoToNextState();
+		GoToDraftState(DraftState.ContractManagement);
+		UpdateLabels();
+	}
+
+	public void StartMainDraft()
+	{
 		GameObject.Find("PauseButton").GetComponent<PauseButton>().Show();
 
-		RoundLabel.transform.DOMoveX(-5.6f, animationTime);
-		PickLabel.transform.DOMoveX(-5.6f, animationTime);
 		pickTimerText.transform.DOMoveY(-1.4f, animationTime);
 		TimerStateOverlay.transform.DOMoveY(-0.75f, animationTime);
 		makePickButton.transform.DOMoveY(-3, animationTime);
@@ -366,10 +374,7 @@ public class DraftTimerScript : MonoBehaviour
 			}
 
 			// Ensure the ring colors are green
-			DOTween.To(() => ringRValue, x => ringRValue = x, ringGreen.r, animationTime);
-			DOTween.To(() => ringGValue, x => ringGValue = x, ringGreen.g, animationTime);
-			DOTween.To(() => ringBValue, x => ringBValue = x, ringGreen.b, animationTime);
-			DOTween.To(() => ringAValue, x => ringAValue = x, ringGreen.a, animationTime);
+			SwitchRingColor(ringGreen);
 
 			// Animation has been initialized
 			animationInitialized = true;
@@ -387,10 +392,7 @@ public class DraftTimerScript : MonoBehaviour
 		if (currentPickTime <= 0)
 		{
 			// Ensure the ring colors are yellow
-			DOTween.To(() => ringRValue, x => ringRValue = x, ringYellow.r, animationTime);
-			DOTween.To(() => ringGValue, x => ringGValue = x, ringYellow.g, animationTime);
-			DOTween.To(() => ringBValue, x => ringBValue = x, ringYellow.b, animationTime);
-			DOTween.To(() => ringAValue, x => ringAValue = x, ringYellow.a, animationTime);
+			SwitchRingColor(ringYellow);
 
 			// Adjust background ring colors
 			Color currentColor = new Color(ringRValue, ringGValue, ringBValue, 0.125f);
@@ -420,10 +422,7 @@ public class DraftTimerScript : MonoBehaviour
 		if (playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].bonusTimeRemaining <= 0)
 		{
 			// Ensure the ring colors are red
-			DOTween.To(() => ringRValue, x => ringRValue = x, ringRed.r, animationTime);
-			DOTween.To(() => ringGValue, x => ringGValue = x, ringRed.g, animationTime);
-			DOTween.To(() => ringBValue, x => ringBValue = x, ringRed.b, animationTime);
-			DOTween.To(() => ringAValue, x => ringAValue = x, ringRed.a, animationTime);
+			SwitchRingColor(ringRed);
 
 			playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].bonusTimeRemaining = 0;
 
@@ -435,6 +434,15 @@ public class DraftTimerScript : MonoBehaviour
 		}
 
 		pickTimerText.text = FormatTimeText(currentPickTime);
+	}
+
+	public void SwitchRingColor(Color newColor)
+	{
+		// Ensure the ring colors are red
+		DOTween.To(() => ringRValue, x => ringRValue = x, newColor.r, animationTime);
+		DOTween.To(() => ringGValue, x => ringGValue = x, newColor.g, animationTime);
+		DOTween.To(() => ringBValue, x => ringBValue = x, newColor.b, animationTime);
+		DOTween.To(() => ringAValue, x => ringAValue = x, newColor.a, animationTime);
 	}
 
 	public string FormatTimeText(float time)
@@ -553,12 +561,6 @@ public class DraftTimerScript : MonoBehaviour
 
 	public void UpdateLabels()
 	{
-		if(RoundLabel && PickLabel)
-		{
-			RoundLabel.GetComponent<Text>().text = "Round: " + (currentRound + 1);
-			PickLabel.GetComponent<Text>().text = "Pick: " + (currentPick + 1);
-		}
-
 		switch (currentDraftState)
 		{
 			case DraftState.AnimateToNextDrafter:
@@ -569,6 +571,9 @@ public class DraftTimerScript : MonoBehaviour
 				break;
 			case DraftState.DraftPaused:
 				draftStatusText.GetComponent<Text>().text = "Paused. Round: " + (currentRound + 1) + " Pick: " + (currentPick + 1);
+				break;
+			case DraftState.ContractManagement:
+				draftStatusText.GetComponent<Text>().text = ContractFlowControl.GetComponent<ContractPlayerScript>().GetLabelText();
 				break;
 			default:
 				draftStatusText.GetComponent<Text>().text = "Drafting. Round: " + (currentRound + 1) + " Pick: " + (currentPick + 1);
@@ -621,8 +626,6 @@ public class DraftTimerScript : MonoBehaviour
 		GameObject.Find("PauseButton").GetComponent<PauseButton>().Hide();
 
 		// Hide the text
-		RoundLabel.transform.DOMoveX(-12, animationTime);
-		PickLabel.transform.DOMoveX(-12, animationTime);
 		pickTimerText.transform.DOMoveY(-10, animationTime);
 		TimerStateOverlay.transform.DOMoveY(-8, animationTime);
 		draftStatusText.transform.DOMoveY(10, animationTime);
