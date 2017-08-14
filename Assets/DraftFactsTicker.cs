@@ -7,11 +7,21 @@ using DG.Tweening;
 public class DraftFactsTicker : MonoBehaviour
 {
 	// Array for facts to show on the facts ticker.
-	private string[] factsArray =
+	private List<string> factsList = new List<string>
 	{
-		"Small Fact.",
-		"A bit of a longer fact about something that most people won't look at.",
+		"The Schaub Keeper League is entering its 12th season!",
+		"Tom Brady is the only player who has been kept by the same team in every season (Kopman).",
+		"In a legendary league post in 2006, Sheebs pointed out that Patrick looks a lot like Robbie Gould.",
+		"Ever since the league went to multiple divisions in 2010, every champion has come from the second division.",
+		"Ties are an embarrasment to everyone involved. The most ties in one season go to Sheebs and Trevor with 2 ties each.",
+		"The 2010 season saw the inaguration of the coveted Schaub Jersey that is awarded to the winner of the league each year.",
+		"The 2012 season was the first season with flex spots in rosters. This was a heavily debated topic in previous years.",
+		"Everyone changing team names every year made it a pain to compile stats... Grrrr...",
+		"One of the greatest ties in league history came after a week-long trash talking tirade between Dan and Sheebs.",
+		"The buy-out rule for keepers was introduced in the 2016 season and was used 6 times.",
+
 	};
+	private List<string> usedFactsList = new List<string>();
 	int currentFactIndex = 0;
 
 	// Time between facts
@@ -70,12 +80,7 @@ public class DraftFactsTicker : MonoBehaviour
 				showingFact = FactTickerState.ChangeText;
 
 				// Set the fact to display
-				textComponent.text = factsArray[currentFactIndex++];
-
-				if (currentFactIndex >= factsArray.Length)
-				{
-					currentFactIndex = 0;
-				}
+				SetNewFactText();
 
 				rectTransform.position = hiddenPosition;
 			}
@@ -102,6 +107,24 @@ public class DraftFactsTicker : MonoBehaviour
 
 			// Start the tween to move to the left side
 			rectTransform.DOMoveX(-endPosition.x, fullAnimationTime).SetEase(Ease.Linear);
+		}
+	}
+
+	private void SetNewFactText()
+	{
+		// Pick a random fact
+		int factIndex = Random.Range(0, factsList.Count - 1);
+		textComponent.text = factsList[factIndex];
+
+		// Remove the fact and add it to the used list
+		usedFactsList.Add(factsList[factIndex]);
+		factsList.RemoveAt(factIndex);
+
+		// Reset the facts list
+		if (factsList.Count == 0)
+		{
+			factsList.AddRange(usedFactsList);
+			usedFactsList.Clear();
 		}
 	}
 }
