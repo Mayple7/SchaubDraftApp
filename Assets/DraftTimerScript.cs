@@ -973,7 +973,7 @@ public class DraftTimerScript : MonoBehaviour
 						{
 							profile.oldOneYearContracts.Add(contract.TrimEnd('*', '1'));
 						}
-						else
+						else if(contract.Length > 0)
 						{
 							print("Contract Filtered: " + contract);
 						}

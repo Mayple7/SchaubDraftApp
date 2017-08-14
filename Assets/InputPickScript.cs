@@ -7,7 +7,7 @@ public class InputPickScript : MonoBehaviour
 {
 	// Input field positions
 	private Vector3 DisplayPosition = new Vector3(-1.9f, -3, 0);
-	private Vector3 HiddenPosition = new Vector3(-14, -3, 0);
+	private Vector3 HiddenPosition = new Vector3(-15, -3, 0);
 
 	// Reference to the main script
 	private DraftTimerScript timerScript;
