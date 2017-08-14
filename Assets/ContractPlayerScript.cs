@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class ContractPlayerScript : MonoBehaviour
 {
@@ -48,6 +49,7 @@ public class ContractPlayerScript : MonoBehaviour
 	{
 		currentYValue = threeYearPickYValue;
 		timerScript = GameObject.Find("DraftTimer").GetComponent<DraftTimerScript>();
+		contractDrafterIndex = (int)DrafterEnum.TotalDrafters - 1;
 		currentContractDrafter = timerScript.DraftOrder[contractDrafterIndex];
 
 		currentLabelText = "Signing Open Contracts: " + timerScript.DrafterNames[(int)currentContractDrafter];
@@ -83,8 +85,8 @@ public class ContractPlayerScript : MonoBehaviour
 				currentTimer += Time.deltaTime;
 				if (currentTimer >= animationTime)
 				{
-					++contractDrafterIndex;
-					if(contractDrafterIndex < (int)DrafterEnum.TotalDrafters)
+					--contractDrafterIndex;
+					if(contractDrafterIndex >= 0)
 					{
 						currentTimer = 0;
 						currentContractPhase = ContractPhaseState.AnimateToNextDrafter;
@@ -93,6 +95,7 @@ public class ContractPlayerScript : MonoBehaviour
 					}
 					else
 					{
+						GameObject.Find("NextContractButton").GetComponent<NextContractButton>().Hide();
 						timerScript.StartMainDraft();
 						Destroy(gameObject);
 					}
@@ -122,11 +125,9 @@ public class ContractPlayerScript : MonoBehaviour
 				break;
 			case ContractPhaseState.BuyOutPhase:
 				currentContractPhase = ContractPhaseState.AnimateOutEverything;
-				if (threePlayerContract.GetComponentInChildren<InputField>().text.Length > 0)
-				{
-					SaveAndClearCurrentContracts();
-				}
+				SaveAndClearCurrentContracts();
 				timerScript.SwitchRingColor(timerScript.ringBlue);
+				currentYValue = threeYearPickYValue;
 				break;
 		}
 	}
@@ -209,20 +210,43 @@ public class ContractPlayerScript : MonoBehaviour
 
 	public void AnimateInBuyOutButtons()
 	{
-		foreach(GameObject contract in otherContractedPlayers)
+		// Count of delayed picks
+		int numDelayedPicks = 1;
+
+		threePlayerContract.GetComponentInChildren<InputField>().interactable = false;
+
+		for (int i = 0; i < otherContractedPlayers.Count; ++i)
 		{
+			GameObject contract = otherContractedPlayers[i];
 			// Ensure the contract doesn't exist in the signed players
 			if(!signedPlayers.Contains(contract))
 			{
 				contract.GetComponent<ContractTemplateScript>().AnimateInReleaseButton();
 			}
+			else
+			{
+				contract.GetComponentInChildren<InputField>().interactable = false;
+			}
+
+			// Remove empty contracts
+			if (otherContractedPlayers[i].GetComponentInChildren<InputField>().text.Length == 0)
+			{
+				BuyOutKeeper(otherContractedPlayers[i]);
+				--i;
+			}
+			else
+			{
+				++numDelayedPicks;
+			}
 		}
+
+		timerScript.playerProfiles[(int)currentContractDrafter].totalContractedPlayers = 1 + otherContractedPlayers.Count;
 	}
 
 	public void SaveAndClearCurrentContracts()
 	{
 		// The 3-year contract
-		timerScript.playerProfiles[(int)currentContractDrafter].threeYearContracts.Add(threePlayerContract.GetComponentInChildren<InputField>().text);
+		timerScript.playerProfiles[(int)currentContractDrafter].threeYearContract = threePlayerContract.GetComponentInChildren<InputField>().text;
 		threePlayerContract.GetComponent<ContractTemplateScript>().AnimateEverythingOut();
 
 		foreach(GameObject contract in otherContractedPlayers)
@@ -248,8 +272,6 @@ public class ContractPlayerScript : MonoBehaviour
 
 		otherContractedPlayers.Clear();
 		signedPlayers.Clear();
-
-		currentYValue = threeYearPickYValue;
 	}
 
 	private string currentLabelText = "Wtf how did this get here?";
@@ -265,5 +287,31 @@ public class ContractPlayerScript : MonoBehaviour
 		}
 
 		return currentLabelText;
+	}
+
+	public void BuyOutKeeper(GameObject templateObject)
+	{
+		bool moveUp = false;
+
+		foreach(GameObject contractObject in otherContractedPlayers)
+		{
+			if(moveUp)
+			{
+				contractObject.transform.DOMoveY(contractObject.transform.position.y + contractYValueDifference, animationTime);
+			}
+			else if(templateObject == contractObject)
+			{
+				templateObject.GetComponentInChildren<ContractTemplateScript>().AnimateEverythingOut();
+				moveUp = true;
+			}
+		}
+
+		// Accumulate a pick to delay
+		if(1 + otherContractedPlayers.Count > 3)
+		{
+			++timerScript.playerProfiles[(int)currentContractDrafter].picksToDelay;
+		}
+
+		otherContractedPlayers.Remove(templateObject);
 	}
 }

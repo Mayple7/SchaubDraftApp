@@ -16,6 +16,8 @@ public class DraftOrderTicker : MonoBehaviour
 	// Max nameplates to show (5 along the top, 1 in the pick slot)
 	public int maxNameplates = 6;
 
+	private bool nameplateCreation = true;
+
 	// Use this for initialization
 	void Start()
 	{
@@ -33,7 +35,8 @@ public class DraftOrderTicker : MonoBehaviour
 	{
 		// Create and initialize the nameplate
 		int numNameplates = draftOrderNameplates.Count;
-		draftOrderNameplates.Add(Instantiate(nameplateTemplate, new Vector3(-7.0f + numNameplates * 3.5f, 3.9f, 0), Quaternion.identity));
+		draftOrderNameplates.Add(Instantiate(nameplateTemplate, new Vector3(-7.0f + numNameplates * 3.5f + gameObject.transform.position.x, 3.9f, 0), Quaternion.identity));
+		draftOrderNameplates.LastOrDefault().transform.DOMoveX(-7.0f + (numNameplates - 1) * 3.5f, timerScript.animationTime);
 		draftOrderNameplates.LastOrDefault().GetComponent<UpdateNameplate>().InitializeVariables(drafterID);
 	}
 
@@ -49,10 +52,17 @@ public class DraftOrderTicker : MonoBehaviour
 			draftOrderNameplates.RemoveAt(0);
 		}
 
-		// Tween all the remaining ticker nameplates into place
-		foreach(GameObject nameplate in draftOrderNameplates)
+		if(!nameplateCreation)
 		{
-			nameplate.transform.DOMoveX(nameplate.transform.position.x - 3.5f, timerScript.animationTime).SetEase(Ease.InOutQuad);
+			// Tween all the remaining ticker nameplates into place
+			foreach (GameObject nameplate in draftOrderNameplates)
+			{
+				nameplate.transform.DOMoveX(nameplate.transform.position.x - 3.5f, timerScript.animationTime).SetEase(Ease.InOutQuad);
+			}
+		}
+		else
+		{
+			nameplateCreation = false;
 		}
 
 		// Return the front nameplate

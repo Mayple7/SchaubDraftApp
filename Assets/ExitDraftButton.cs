@@ -11,7 +11,7 @@ public class ExitDraftButton : MonoBehaviour
 	public Sprite clickSprite;
 	
 	// Button positions
-	private Vector3 DisplayPosition = new Vector3(0, -4, 0);
+	private Vector3 DisplayPosition = new Vector3(0, -3.5f, 0);
 	private Vector3 HiddenPosition = new Vector3(0, -6, 0);
 
 	// Reference to the main script

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -41,12 +42,14 @@ public class PlayerProfile
 {
 	public string playerName;
 
+	// Nameplate info
   public Sprite playerNameplate;
   public float bonusTimeRemaining;
-
 	public float totalTimeUsed = 0;
 
+	// Max Contracted Players
 	public int totalContractedPlayers = 0;
+	public int picksToDelay = 0;
 
 	// Holds old contracted players
 	public List<string> oldThreeYearContracts;
@@ -54,9 +57,11 @@ public class PlayerProfile
 	public List<string> oldOneYearContracts;
 
 	// Holds newly contracted players
-	public List<string> threeYearContracts;
+	public string threeYearContract;
 	public List<string> twoYearContracts;
 	public List<string> oneYearContracts;
+
+	public bool contractDataWritten = false;
 
 	// Simple list for all player picks
 	public List<string> allPlayerPicks;
@@ -93,18 +98,18 @@ public class DraftTimerScript : MonoBehaviour
 
   public DrafterEnum[] DraftOrder =
   {
-    DrafterEnum.Patrick,
-    DrafterEnum.Jake,
-    DrafterEnum.Trevor,
-    DrafterEnum.Kopman,
-    DrafterEnum.Colin,
-    DrafterEnum.Doug,
-    DrafterEnum.Sheebs,
-    DrafterEnum.Parks,
-    DrafterEnum.Ben,
-    DrafterEnum.Hans,
-    DrafterEnum.Drew,
-    DrafterEnum.Dan
+		DrafterEnum.Dan,
+		DrafterEnum.Drew,
+		DrafterEnum.Hans,
+		DrafterEnum.Ben,
+		DrafterEnum.Parks,
+		DrafterEnum.Sheebs,
+		DrafterEnum.Doug,
+		DrafterEnum.Colin,
+		DrafterEnum.Kopman,
+		DrafterEnum.Trevor,
+		DrafterEnum.Jake,
+		DrafterEnum.Patrick,
   };
 
 	// Ring Objects
@@ -141,7 +146,6 @@ public class DraftTimerScript : MonoBehaviour
 	private int tickerRound = 0;
 	private int tickerPick = 0;
 
-	public GameObject ReleaseKeeperButton;
 	public GameObject ContractFlowControl;
 
 	private DraftState currentDraftState = DraftState.DraftStopped;
@@ -171,7 +175,7 @@ public class DraftTimerScript : MonoBehaviour
 			playerProfiles[i].oldTwoYearContracts = new List<string>();
 			playerProfiles[i].oldOneYearContracts = new List<string>();
 
-			playerProfiles[i].threeYearContracts = new List<string>();
+			playerProfiles[i].threeYearContract = String.Empty;
 			playerProfiles[i].twoYearContracts = new List<string>();
 			playerProfiles[i].oneYearContracts = new List<string>();
 
@@ -204,9 +208,112 @@ public class DraftTimerScript : MonoBehaviour
 
     currentPickTime = maxPickTime;
 
+		pickTimerText = GameObject.Find("PickTimer").GetComponent<Text>();
+		pickTimerText.text = FormatTimeText(currentPickTime);
+
+		int time = 15;
+		int rotationValue = 1;
+		foreach(var ring in RingObjects)
+		{
+			ring.transform.DORotate(new Vector3(0, 0, 180 * rotationValue), time).SetLoops(-1, LoopType.Incremental).SetEase(Ease.Linear);
+
+			rotationValue *= -1;
+			time += 2;
+		}
+
+		InitializeContractSerializer();
+		InitializeDraftSerializer();
+	}
+
+	public void BeginDraft()
+	{
+		GameObject.Find("BeginDraftButton").GetComponent<BeginDraftButton>().Hide();
+
+		ContractFlowControl.GetComponent<ContractPlayerScript>().GoToNextState();
+		GoToDraftState(DraftState.ContractManagement);
+		UpdateLabels();
+	}
+
+	public void StartMainDraft()
+	{
+		// Delay all picks in reverse draft order
+		for(int i = DraftOrder.Length - 1; i >= 0; --i)
+		{
+			// Forfeit any picks first
+			int contracts = 1 + playerProfiles[(int)DraftOrder[i]].twoYearContracts.Count + playerProfiles[(int)DraftOrder[i]].oneYearContracts.Count;
+
+			if (contracts > 3)
+			{
+				bool breakOut = false;
+				// Loop to forfeit picks 
+				while (contracts > 3)
+				{
+					for (int j = 0; j < totalRounds; ++i)
+					{
+						foreach (PickInfo pick in pickInfo[j])
+						{
+							// Remove pick from the draft
+							if (pick.drafterID == DraftOrder[i])
+							{
+								print("PICK FORFEITED: " + pick.drafterID);
+								pickInfo[j].Remove(pick);
+								--contracts;
+								breakOut = true;
+								break;
+							}
+						}
+
+						if (breakOut)
+						{
+							break;
+						}
+					}
+
+					breakOut = false;
+				}
+			}
+
+			// Delay picks for the given drafter
+			print(DraftOrder[i] + " : " + playerProfiles[(int)DraftOrder[i]].picksToDelay);
+			DelayPicks(DraftOrder[i], playerProfiles[(int)DraftOrder[i]].picksToDelay);
+		}
+
+		// Add all compensation picks
+		foreach (DrafterEnum drafter in DraftOrder)
+		{
+			int contracts = 1 + playerProfiles[(int)drafter].twoYearContracts.Count + playerProfiles[(int)drafter].oneYearContracts.Count;
+
+			// Compensation picks need to be added
+			if(contracts < 3)
+			{
+				// Compensation pick for 2 year contracts (after round 2)
+				if(playerProfiles[(int)drafter].twoYearContracts.Count == 0)
+				{
+					PickInfo newPick = new PickInfo();
+					newPick.drafterID = drafter;
+					newPick.roundNumber = 0;
+					newPick.pickNumber = pickInfo[1].Count;
+
+					pickInfo[1].Add(newPick);
+				}
+
+				// Compensation pick for 1 year contracts (after round 1)
+				if (playerProfiles[(int)drafter].oneYearContracts.Count == 0)
+				{
+					PickInfo newPick = new PickInfo();
+					newPick.drafterID = drafter;
+					newPick.roundNumber = 0;
+					newPick.pickNumber = pickInfo[0].Count;
+
+					pickInfo[0].Add(newPick);
+				}
+			}
+		}
+
 		// Start the draft order ticker script
-		var tempObj = Instantiate(draftOrderTickerTemplate);
-		draftOrderTicker = tempObj.GetComponent<DraftOrderTicker>();
+		GameObject orderObject = GameObject.Find("DraftOrderTicker");
+		orderObject.transform.DOMoveX(0, animationTime);
+		draftOrderTicker = orderObject.GetComponent<DraftOrderTicker>();
 
 		for (int i = 0; i < draftOrderTicker.maxNameplates; ++i)
 		{
@@ -226,31 +333,6 @@ public class DraftTimerScript : MonoBehaviour
 			}
 		}
 
-		pickTimerText = GameObject.Find("PickTimer").GetComponent<Text>();
-		pickTimerText.text = FormatTimeText(currentPickTime);
-
-		int time = 15;
-		int rotationValue = 1;
-		foreach(var ring in RingObjects)
-		{
-			ring.transform.DORotate(new Vector3(0, 0, 180 * rotationValue), time).SetLoops(-1, LoopType.Incremental).SetEase(Ease.Linear);
-
-			rotationValue *= -1;
-			time += 2;
-		}
-	}
-
-	public void BeginDraft()
-	{
-		GameObject.Find("BeginDraftButton").GetComponent<BeginDraftButton>().Hide();
-
-		ContractFlowControl.GetComponent<ContractPlayerScript>().GoToNextState();
-		GoToDraftState(DraftState.ContractManagement);
-		UpdateLabels();
-	}
-
-	public void StartMainDraft()
-	{
 		GameObject.Find("PauseButton").GetComponent<PauseButton>().Show();
 
 		pickTimerText.transform.DOMoveY(-1.4f, animationTime);
@@ -488,9 +570,56 @@ public class DraftTimerScript : MonoBehaviour
 			return;
 		}
 
+		// Contract data is not written
+		int currentDrafter = (int)pickInfo[currentRound][currentPick].drafterID;
+		if (!playerProfiles[currentDrafter].contractDataWritten)
+		{
+			// Count all the contracts (everyone always has a 3year contract)
+			int contracts = 1;
+			// Add up all the contracts
+			contracts += playerProfiles[currentDrafter].twoYearContracts.Count;
+			contracts += playerProfiles[currentDrafter].oneYearContracts.Count;
+
+			// Already have 3 contracts
+			if(contracts >= 3)
+			{
+				SerializeContractData(pickInfo[currentRound][currentPick].drafterID);
+				playerProfiles[currentDrafter].contractDataWritten = true;
+
+				pickInfo[currentRound][currentPick].playerPicked = textBoxObject.GetComponent<InputField>().text;
+			}
+			else
+			{
+				// Two year contract slot is open
+				if (playerProfiles[currentDrafter].twoYearContracts.Count == 0)
+				{
+					// Add player as 2 year contract
+					playerProfiles[currentDrafter].twoYearContracts.Add(textBoxObject.GetComponent<InputField>().text);
+					++contracts;
+				}
+				// One year contract slot is open
+				else if (playerProfiles[currentDrafter].oneYearContracts.Count == 0)
+				{
+					// Add player as 1 year contract
+					playerProfiles[currentDrafter].oneYearContracts.Add(textBoxObject.GetComponent<InputField>().text);
+					++contracts;
+				}
+
+				// Done getting contracts so write this out
+				if (contracts >= 3)
+				{
+					SerializeContractData(pickInfo[currentRound][currentPick].drafterID);
+					playerProfiles[currentDrafter].contractDataWritten = true;
+				}
+			}
+		}
+		else
+		{
+			pickInfo[currentRound][currentPick].playerPicked = textBoxObject.GetComponent<InputField>().text;
+		}
+
 		// Grab the pick text and clear the textbox.
-		pickInfo[currentRound][currentPick].playerPicked = textBoxObject.GetComponent<InputField>().text;
-		pickHistoryTicker.GetComponent<PickHistoryTicker>().AddPickToHistory(pickInfo[currentRound][currentPick].playerPicked);
+		pickHistoryTicker.GetComponent<PickHistoryTicker>().AddPickToHistory(textBoxObject.GetComponent<InputField>().text);
 		textBoxObject.GetComponent<InputField>().text = "";
 		textBoxObject.GetComponent<InputPickScript>().Hide();
 		confirmPickButton.GetComponent<ConfirmPickButton>().Hide();
@@ -505,6 +634,83 @@ public class DraftTimerScript : MonoBehaviour
 
 		// Start next pick animation
 		GoToDraftState(DraftState.AnimateToNextDrafter);
+	}
+
+	public void DelayPicks(DrafterEnum drafterToDelay, int numPicks)
+	{
+		if (numPicks <= 0)
+		{
+			return;
+		}
+
+		List<PickInfo> delayedPicks = new List<PickInfo>();
+
+		// Add picks to delay to the list
+		for(int i = 0; i <= totalRounds; ++i)
+		{
+			for(int j = 0; j < pickInfo[i].Count; ++j)
+			{
+				// Found the pick to delay
+				if(pickInfo[i][j].drafterID == drafterToDelay)
+				{
+					pickInfo[i][j].roundNumber = i;
+					pickInfo[i][j].pickNumber = j;
+					delayedPicks.Add(pickInfo[i][j]);
+					--numPicks;
+				}
+
+				if(numPicks <= 0)
+				{
+					break;
+				}
+			}
+
+			if (numPicks <= 0)
+			{
+				break;
+			}
+		}
+
+		// Reverse the list to move the last pick first
+		delayedPicks.Reverse();
+
+		// Go through all the picks and delay them
+		foreach (PickInfo pick in delayedPicks)
+		{
+			DelayPick(pick, pick.roundNumber, pick.pickNumber);
+		}
+	}
+
+	// Actually delays the pick by 6 slots
+	private void DelayPick(PickInfo pick, int roundNumber, int pickNumber)
+	{
+		int numPicksMoved = 0;
+		int maxPicksToMove = 6;
+
+		// Remove pick from the rounds
+		pickInfo[roundNumber].Remove(pick);
+
+		int startingPickValue = pickNumber;
+		
+		for(int i = roundNumber; i < totalRounds; ++i)
+		{
+			for(int j = startingPickValue; j < pickInfo[i].Count; ++j)
+			{
+				if(numPicksMoved >= maxPicksToMove)
+				{
+					pickInfo[i].Insert(j, pick);
+					return;
+				}
+
+				++numPicksMoved;
+			}
+
+			// Start counting at pick 1
+			startingPickValue = 0;
+		}
+
+		// Pick moved to the end if there are no more rounds to move it back
+		pickInfo[totalRounds - 1].Add(pick);
 	}
 
 	public void ReleaseKeeper()
@@ -587,6 +793,9 @@ public class DraftTimerScript : MonoBehaviour
 		// Add time to the profile
 		playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].totalTimeUsed += (maxPickTime - currentPickTime);
 
+		// Write the draft data now
+		SerializeDraftData();
+
 		// Cycle the pick now
 		++currentPick;
 		currentPickTime = maxPickTime;
@@ -598,19 +807,9 @@ public class DraftTimerScript : MonoBehaviour
 
 			if (currentRound >= totalRounds)
 			{
-				SerializeDraftData();
+				FinishSerializingDraft();
 				CleanupDraftUI();
 				return true;
-			}
-
-			// Animate the release keeper button
-			if (currentRound == 1)
-			{
-				ReleaseKeeperButton.transform.DOMoveX(-5.7f, animationTime);
-			}
-			if (currentRound == 3)
-			{
-				ReleaseKeeperButton.transform.DOMoveX(-12, animationTime);
 			}
 		}
 
@@ -630,8 +829,6 @@ public class DraftTimerScript : MonoBehaviour
 		TimerStateOverlay.transform.DOMoveY(-8, animationTime);
 		draftStatusText.transform.DOMoveY(10, animationTime);
 
-		ReleaseKeeperButton.GetComponent<ReleaseKeeperButton>().Hide();
-
 		GoToDraftState(DraftState.DraftFinished);
 
 		// Hide UI stuff
@@ -641,44 +838,102 @@ public class DraftTimerScript : MonoBehaviour
 		pickHistoryTicker.GetComponent<PickHistoryTicker>().HideHistoryTicker();
 	}
 
+	private StreamWriter contractWriter;
+	private void InitializeContractSerializer()
+	{
+		string contractFilename = "/Contracts" + DateTime.Now.Year + ".txt";
+		string contractFilepath = Application.persistentDataPath + contractFilename;
+
+		// Remove the old draft data
+		if (File.Exists(contractFilepath))
+		{
+			File.Delete(contractFilepath);
+		}
+
+		contractWriter = new StreamWriter(contractFilepath, true);
+		contractWriter.AutoFlush = true;
+	}
+
+	public void SerializeContractData(DrafterEnum drafter)
+	{
+		StringBuilder lineToWrite = new StringBuilder();
+		lineToWrite.Append(DrafterNames[(int)drafter] + ":");
+		lineToWrite.Append(playerProfiles[(int)drafter].threeYearContract);
+		lineToWrite.Append("*3:");
+
+		// Append two year contracts
+		foreach(string contract in playerProfiles[(int)drafter].twoYearContracts)
+		{
+			lineToWrite.Append(contract);
+			lineToWrite.Append("*2:");
+		}
+
+		// Append one year contracts
+		foreach (string contract in playerProfiles[(int)drafter].oneYearContracts)
+		{
+			lineToWrite.Append(contract);
+			lineToWrite.Append("*1:");
+		}
+
+		contractWriter.WriteLine(lineToWrite);
+	}
+
+	private StreamWriter draftWriter;
+	private void InitializeDraftSerializer()
+	{
+		string filename = "/DraftResults" + DateTime.Now.Year + ".txt";
+		string filepath = Application.persistentDataPath + filename;
+
+		// Remove the old draft data
+		if (File.Exists(filepath))
+		{
+			File.Delete(filepath);
+		}
+
+		draftWriter = new StreamWriter(filepath, true);
+		draftWriter.AutoFlush = true;
+		draftWriter.WriteLine("Round:Pick:Drafter:PickedPlayer");
+	}
+
 	public void SerializeDraftData()
   {
-    print("SERIALIZE DRAFT DATA");
-    string filename = "/DraftResults.txt";
-    string filepath = Application.persistentDataPath + filename;
-    print(filepath);
+		if(!String.IsNullOrEmpty(pickInfo[currentRound][currentPick].playerPicked))
+		{
+			string lineToWrite = (currentRound + 1) + ":" + (currentPick + 1) + ":" + DrafterNames[(int)pickInfo[currentRound][currentPick].drafterID] + ":" + pickInfo[currentRound][currentPick].playerPicked;
+			draftWriter.WriteLine(lineToWrite);
+		}
+  }
 
-    StreamWriter writer;
-    // Remove the old draft data
-    if(File.Exists(filepath))
-    {
-      File.Delete(filepath);
-    }
+	public void FinishSerializingDraft()
+	{
+		StreamWriter statsWriter;
+		string filename = "/DraftStats" + DateTime.Now.Year + ".txt";
+		string filepath = Application.persistentDataPath + filename;
 
-    writer = new StreamWriter(filepath, true);
-    writer.WriteLine("Round:Pick:Drafter:PickedPlayer");
-    for (int i = 0; i < totalRounds; ++i)
-    {
-      for (int j = 0; j < (int)pickInfo[i].Count; ++j)
-      {
-        PickInfo pick = pickInfo[i][j];
-        string lineToWrite = (pick.roundNumber + 1) + ":" + (pick.pickNumber + 1) + ":" + DrafterNames[(int)pick.drafterID] + ":" + pick.playerPicked;
-        writer.WriteLine(lineToWrite);
-      }
-    }
+		// Remove the old draft data
+		if (File.Exists(filepath))
+		{
+			File.Delete(filepath);
+		}
 
-		writer.WriteLine("Total Time Used:Bonus Time Used");
+		statsWriter = new StreamWriter(filepath, true);
+
+		// Add a header
+		statsWriter.WriteLine("Total Time Used:Bonus Time Used");
 
 		for (int i = 0; i < (int)DrafterEnum.TotalDrafters; ++i)
 		{
 			PlayerProfile currentPlayer = playerProfiles[i];
 			currentPlayer.totalTimeUsed += (maxBonusTime - currentPlayer.bonusTimeRemaining);
 
-			writer.WriteLine(DrafterNames[i] + ":" + currentPlayer.totalTimeUsed + ":" + (maxBonusTime - currentPlayer.bonusTimeRemaining));
+			statsWriter.WriteLine(DrafterNames[i] + ":" + currentPlayer.totalTimeUsed + ":" + (maxBonusTime - currentPlayer.bonusTimeRemaining));
 		}
 
-    writer.Close();
-  }
+		// Close the writers
+		statsWriter.Close();
+		draftWriter.Close();
+		contractWriter.Close();
+	}
 
 	public void ImportContractPlayers()
 	{
@@ -727,6 +982,8 @@ public class DraftTimerScript : MonoBehaviour
 				}
 			}
 		}
+
+		reader.Close();
 	}
 
 	public DrafterEnum[] GetDraftOrder()

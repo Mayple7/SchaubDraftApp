@@ -55,7 +55,7 @@ public class ContractReleaseButton : MonoBehaviour
 		this.GetComponent<SpriteRenderer>().sprite = hoverSprite;
 
 		// Notify our timer script that the pick has been confirmed
-		timerScript.ReleaseKeeper();
+		GameObject.Find("ContractPlayerFlow").GetComponent<ContractPlayerScript>().BuyOutKeeper(gameObject.transform.parent.gameObject);
 	}
 
 	private void OnMouseExit()
