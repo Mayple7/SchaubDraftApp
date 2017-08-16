@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class InputPickScript : MonoBehaviour
 {
@@ -21,16 +22,27 @@ public class InputPickScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		
+		if(gameObject.GetComponent<InputField>().IsInteractable())
+		{
+			if(Input.GetKeyUp(KeyCode.Tab))
+			{
+				if(timerScript.playerDatabase.NumMatchingPlayers(gameObject.GetComponent<InputField>().text) == 1)
+				{
+					gameObject.GetComponent<InputField>().text = timerScript.playerDatabase.GetSearchResult();
+				}
+			}
+		}
 	}
 
 	public void Show()
 	{
 		this.transform.DOMove(DisplayPosition, timerScript.quickAnimationTime);
+		gameObject.GetComponent<InputField>().interactable = true;
 	}
 
 	public void Hide()
 	{
 		this.transform.DOMove(HiddenPosition, timerScript.quickAnimationTime);
+		gameObject.GetComponent<InputField>().interactable = false;
 	}
 }

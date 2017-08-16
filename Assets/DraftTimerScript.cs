@@ -159,11 +159,16 @@ public class DraftTimerScript : MonoBehaviour
 
 	private Text pickTimerText;
 
+	public PlayerDatabase playerDatabase;
+
 	// Use this for initialization
 	void Start ()
   {
-    // Create each of the player profiles
-    playerProfiles = new PlayerProfile[(int)DrafterEnum.TotalDrafters];
+		playerDatabase = new PlayerDatabase();
+		playerDatabase.ImportPlayerData();
+
+		// Create each of the player profiles
+		playerProfiles = new PlayerProfile[(int)DrafterEnum.TotalDrafters];
     for(int i = 0; i < (int)DrafterEnum.TotalDrafters; ++i)
     {
       playerProfiles[i] = new PlayerProfile();
