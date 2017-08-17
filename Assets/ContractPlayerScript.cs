@@ -246,7 +246,7 @@ public class ContractPlayerScript : MonoBehaviour
 	public void SaveAndClearCurrentContracts()
 	{
 		// The 3-year contract
-		timerScript.playerProfiles[(int)currentContractDrafter].threeYearContract = threePlayerContract.GetComponentInChildren<InputField>().text;
+		timerScript.playerProfiles[(int)currentContractDrafter].threeYearContract = timerScript.playerDatabase.PickPlayerFromDatabase(threePlayerContract.GetComponentInChildren<InputField>().text);
 		threePlayerContract.GetComponent<ContractTemplateScript>().AnimateEverythingOut();
 
 		foreach(GameObject contract in otherContractedPlayers)
@@ -261,12 +261,12 @@ public class ContractPlayerScript : MonoBehaviour
 			// 2 year contract
 			if(contract.transform.Find("ContractLengthBackground").gameObject.GetComponentInChildren<TextMesh>().text.Contains("2"))
 			{
-				timerScript.playerProfiles[(int)currentContractDrafter].twoYearContracts.Add(contract.GetComponentInChildren<InputField>().text);
+				timerScript.playerProfiles[(int)currentContractDrafter].twoYearContracts.Add(timerScript.playerDatabase.PickPlayerFromDatabase(contract.GetComponentInChildren<InputField>().text));
 			}
 			// 1 year contract
 			else
 			{
-				timerScript.playerProfiles[(int)currentContractDrafter].oneYearContracts.Add(contract.GetComponentInChildren<InputField>().text);
+				timerScript.playerProfiles[(int)currentContractDrafter].oneYearContracts.Add(timerScript.playerDatabase.PickPlayerFromDatabase(contract.GetComponentInChildren<InputField>().text));
 			}
 		}
 

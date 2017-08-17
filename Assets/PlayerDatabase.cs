@@ -160,6 +160,54 @@ public class PlayerDatabase
 		Debug.Log(wrList.Count);
 	}
 
+	public PlayerData PickPlayerFromDatabase(string playerName)
+	{
+		// Get the number of matches
+		int numMatches = NumMatchingPlayers(playerName);
+
+		// Single match found, remove from database and return the player
+		if (numMatches == 1)
+		{
+			PlayerData foundPlayer = searchResults.First();
+
+			// Remove the player from the database
+			switch (foundPlayer.position)
+			{
+				case Position.QB:
+					qbList.Remove(foundPlayer);
+					break;
+				case Position.RB:
+					rbList.Remove(foundPlayer);
+					break;
+				case Position.WR:
+					wrList.Remove(foundPlayer);
+					break;
+				case Position.TE:
+					teList.Remove(foundPlayer);
+					break;
+				case Position.K:
+					kList.Remove(foundPlayer);
+					break;
+				case Position.DEF:
+					defList.Remove(foundPlayer);
+					break;
+			}
+
+			// Return the player
+			return foundPlayer;
+		}
+		else
+		{
+			PlayerData newPlayer = new PlayerData();
+			newPlayer.playerName = playerName;
+			newPlayer.overallRank = 500;
+			newPlayer.nflTeam = NFLTeam.FA;
+			newPlayer.position = Position.DEF;
+			newPlayer.byeWeek = 0;
+			return newPlayer;
+		}
+	}
+
 	// Gets the nfl team enum from the team string
 	public NFLTeam GetNFLTeam(string teamString)
 	{
@@ -187,7 +235,7 @@ public class PlayerDatabase
 		// Look through the QBs
 		foreach (PlayerData player in qbList)
 		{
-			if(player.playerName.Contains(playerToFind))
+			if(player.playerName.IndexOf(playerToFind, StringComparison.OrdinalIgnoreCase) >= 0)
 			{
 				searchResults.Add(player);
 			}
@@ -196,7 +244,7 @@ public class PlayerDatabase
 		// Look through the RBs
 		foreach (PlayerData player in rbList)
 		{
-			if (player.playerName.Contains(playerToFind))
+			if (player.playerName.IndexOf(playerToFind, StringComparison.OrdinalIgnoreCase) >= 0)
 			{
 				searchResults.Add(player);
 			}
@@ -205,7 +253,7 @@ public class PlayerDatabase
 		// Look through the WRs
 		foreach (PlayerData player in wrList)
 		{
-			if (player.playerName.Contains(playerToFind))
+			if (player.playerName.IndexOf(playerToFind, StringComparison.OrdinalIgnoreCase) >= 0)
 			{
 				searchResults.Add(player);
 			}
@@ -214,7 +262,7 @@ public class PlayerDatabase
 		// Look through the TEs
 		foreach (PlayerData player in teList)
 		{
-			if (player.playerName.Contains(playerToFind))
+			if (player.playerName.IndexOf(playerToFind, StringComparison.OrdinalIgnoreCase) >= 0)
 			{
 				searchResults.Add(player);
 			}
@@ -223,7 +271,7 @@ public class PlayerDatabase
 		// Look through the Ks
 		foreach (PlayerData player in kList)
 		{
-			if (player.playerName.Contains(playerToFind))
+			if (player.playerName.IndexOf(playerToFind, StringComparison.OrdinalIgnoreCase) >= 0)
 			{
 				searchResults.Add(player);
 			}
@@ -232,7 +280,7 @@ public class PlayerDatabase
 		// Look through the DEFs
 		foreach (PlayerData player in defList)
 		{
-			if (player.playerName.Contains(playerToFind))
+			if (player.playerName.IndexOf(playerToFind, StringComparison.OrdinalIgnoreCase) >= 0)
 			{
 				searchResults.Add(player);
 			}

@@ -55,7 +55,6 @@ public class ReleaseKeeperButton : MonoBehaviour
 		this.GetComponent<SpriteRenderer>().sprite = hoverSprite;
 
 		// Notify our timer script that the pick has been confirmed
-		timerScript.ReleaseKeeper();
 	}
 
 	private void OnMouseExit()

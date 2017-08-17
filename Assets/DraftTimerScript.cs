@@ -57,14 +57,14 @@ public class PlayerProfile
 	public List<string> oldOneYearContracts;
 
 	// Holds newly contracted players
-	public string threeYearContract;
-	public List<string> twoYearContracts;
-	public List<string> oneYearContracts;
+	public PlayerDatabase.PlayerData threeYearContract;
+	public List<PlayerDatabase.PlayerData> twoYearContracts;
+	public List<PlayerDatabase.PlayerData> oneYearContracts;
 
 	public bool contractDataWritten = false;
 
 	// Simple list for all player picks
-	public List<string> allPlayerPicks;
+	public List<PlayerDatabase.PlayerData> allPlayerPicks;
 }
 
 public class PickInfo
@@ -73,7 +73,7 @@ public class PickInfo
   public int pickNumber;
 
   public DrafterEnum drafterID;
-  public string playerPicked;
+  public PlayerDatabase.PlayerData playerPicked;
 }
 
 public class DraftTimerScript : MonoBehaviour
@@ -180,11 +180,11 @@ public class DraftTimerScript : MonoBehaviour
 			playerProfiles[i].oldTwoYearContracts = new List<string>();
 			playerProfiles[i].oldOneYearContracts = new List<string>();
 
-			playerProfiles[i].threeYearContract = String.Empty;
-			playerProfiles[i].twoYearContracts = new List<string>();
-			playerProfiles[i].oneYearContracts = new List<string>();
+			playerProfiles[i].threeYearContract = null;
+			playerProfiles[i].twoYearContracts = new List<PlayerDatabase.PlayerData>();
+			playerProfiles[i].oneYearContracts = new List<PlayerDatabase.PlayerData>();
 
-			playerProfiles[i].allPlayerPicks = new List<string>();
+			playerProfiles[i].allPlayerPicks = new List<PlayerDatabase.PlayerData>();
 		}
 
 		// Import the previous year's contracts
@@ -591,7 +591,8 @@ public class DraftTimerScript : MonoBehaviour
 				SerializeContractData(pickInfo[currentRound][currentPick].drafterID);
 				playerProfiles[currentDrafter].contractDataWritten = true;
 
-				pickInfo[currentRound][currentPick].playerPicked = textBoxObject.GetComponent<InputField>().text;
+				pickInfo[currentRound][currentPick].playerPicked = playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text);
+				playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].allPlayerPicks.Add(pickInfo[currentRound][currentPick].playerPicked);
 			}
 			else
 			{
@@ -599,14 +600,14 @@ public class DraftTimerScript : MonoBehaviour
 				if (playerProfiles[currentDrafter].twoYearContracts.Count == 0)
 				{
 					// Add player as 2 year contract
-					playerProfiles[currentDrafter].twoYearContracts.Add(textBoxObject.GetComponent<InputField>().text);
+					playerProfiles[currentDrafter].twoYearContracts.Add(playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text));
 					++contracts;
 				}
 				// One year contract slot is open
 				else if (playerProfiles[currentDrafter].oneYearContracts.Count == 0)
 				{
 					// Add player as 1 year contract
-					playerProfiles[currentDrafter].oneYearContracts.Add(textBoxObject.GetComponent<InputField>().text);
+					playerProfiles[currentDrafter].oneYearContracts.Add(playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text));
 					++contracts;
 				}
 
@@ -620,7 +621,8 @@ public class DraftTimerScript : MonoBehaviour
 		}
 		else
 		{
-			pickInfo[currentRound][currentPick].playerPicked = textBoxObject.GetComponent<InputField>().text;
+			pickInfo[currentRound][currentPick].playerPicked = playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text);
+			playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].allPlayerPicks.Add(pickInfo[currentRound][currentPick].playerPicked);
 		}
 
 		// Grab the pick text and clear the textbox.
@@ -716,45 +718,6 @@ public class DraftTimerScript : MonoBehaviour
 
 		// Pick moved to the end if there are no more rounds to move it back
 		pickInfo[totalRounds - 1].Add(pick);
-	}
-
-	public void ReleaseKeeper()
-	{
-		// Don't activate if timer is not active
-		if (currentDraftState != DraftState.CountdownPickTimer && currentDraftState != DraftState.CountdownBonusTimer)
-		{
-			return;
-		}
-
-		PickInfo newPick = new PickInfo();
-		newPick.drafterID = pickInfo[currentRound][currentPick].drafterID;
-		switch (currentRound)
-		{
-			case 1:
-				newPick.roundNumber = 4;
-				newPick.pickNumber = pickInfo[newPick.roundNumber].Count;
-				pickInfo[newPick.roundNumber].Add(newPick);
-				break;
-			case 2:
-				newPick.roundNumber = 3;
-				newPick.pickNumber = 12;
-				pickInfo[newPick.roundNumber].Insert(12, newPick);
-				for(int i = 12; i < pickInfo[newPick.roundNumber].Count; ++i)
-				{
-					pickInfo[newPick.roundNumber][i].pickNumber = i;
-				}
-				break;
-			default:
-				return;
-		}
-		
-		if(CycleToNextPick())
-		{
-			return;
-		}
-		
-		// Start next pick animation
-		GoToDraftState(DraftState.AnimateToNextDrafter);
 	}
 
 	public void SwapDraftState()
@@ -863,20 +826,20 @@ public class DraftTimerScript : MonoBehaviour
 	{
 		StringBuilder lineToWrite = new StringBuilder();
 		lineToWrite.Append(DrafterNames[(int)drafter] + ":");
-		lineToWrite.Append(playerProfiles[(int)drafter].threeYearContract);
+		lineToWrite.Append(playerProfiles[(int)drafter].threeYearContract.playerName);
 		lineToWrite.Append("*3:");
 
 		// Append two year contracts
-		foreach(string contract in playerProfiles[(int)drafter].twoYearContracts)
+		foreach(PlayerDatabase.PlayerData contract in playerProfiles[(int)drafter].twoYearContracts)
 		{
-			lineToWrite.Append(contract);
+			lineToWrite.Append(contract.playerName);
 			lineToWrite.Append("*2:");
 		}
 
 		// Append one year contracts
-		foreach (string contract in playerProfiles[(int)drafter].oneYearContracts)
+		foreach (PlayerDatabase.PlayerData contract in playerProfiles[(int)drafter].oneYearContracts)
 		{
-			lineToWrite.Append(contract);
+			lineToWrite.Append(contract.playerName);
 			lineToWrite.Append("*1:");
 		}
 
@@ -902,9 +865,9 @@ public class DraftTimerScript : MonoBehaviour
 
 	public void SerializeDraftData()
   {
-		if(!String.IsNullOrEmpty(pickInfo[currentRound][currentPick].playerPicked))
+		if(!String.IsNullOrEmpty(pickInfo[currentRound][currentPick].playerPicked.playerName))
 		{
-			string lineToWrite = (currentRound + 1) + ":" + (currentPick + 1) + ":" + DrafterNames[(int)pickInfo[currentRound][currentPick].drafterID] + ":" + pickInfo[currentRound][currentPick].playerPicked;
+			string lineToWrite = (currentRound + 1) + ":" + (currentPick + 1) + ":" + DrafterNames[(int)pickInfo[currentRound][currentPick].drafterID] + ":" + pickInfo[currentRound][currentPick].playerPicked.playerName;
 			draftWriter.WriteLine(lineToWrite);
 		}
   }

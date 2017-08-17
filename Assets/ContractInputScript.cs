@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 
-public class InputPickScript : MonoBehaviour
+public class ContractInputScript : MonoBehaviour
 {
 	// Sprites for found player
 	public Sprite singleCheckMark;
@@ -21,17 +21,17 @@ public class InputPickScript : MonoBehaviour
 	public GameObject checkMarkObject;
 
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
-		timerScript = GameObject.Find("DraftTimer").GetComponent<DraftTimerScript>();
+
 	}
-	
+
 	// Update is called once per frame
-	void Update ()
+	void Update()
 	{
-		if(gameObject.GetComponent<InputField>().IsInteractable())
+		if (gameObject.GetComponent<InputField>().IsInteractable())
 		{
-			if(Input.GetKeyUp(KeyCode.Tab))
+			if (Input.GetKeyUp(KeyCode.Tab))
 			{
 				int numMatches = timerScript.playerDatabase.NumMatchingPlayers(gameObject.GetComponent<InputField>().text);
 				// Player Found
@@ -44,20 +44,13 @@ public class InputPickScript : MonoBehaviour
 		}
 	}
 
-	public void Show()
-	{
-		this.transform.DOMove(DisplayPosition, timerScript.quickAnimationTime);
-		gameObject.GetComponent<InputField>().interactable = true;
-	}
-
-	public void Hide()
-	{
-		this.transform.DOMove(HiddenPosition, timerScript.quickAnimationTime);
-		gameObject.GetComponent<InputField>().interactable = false;
-	}
-
 	public void UpdatePlayersMatched()
 	{
+		if(!timerScript)
+		{
+			timerScript = GameObject.Find("DraftTimer").GetComponent<DraftTimerScript>();
+		}
+
 		int numMatches = timerScript.playerDatabase.NumMatchingPlayers(gameObject.GetComponent<InputField>().text);
 
 		// Player Found
