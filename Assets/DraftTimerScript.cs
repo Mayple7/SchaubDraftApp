@@ -369,7 +369,7 @@ public class DraftTimerScript : MonoBehaviour
 			case DraftState.ThePickIsIn:
 				break;
 			case DraftState.DraftFinished:
-				DraftFinishedAnimation();
+				StartPostDraftStats();
 				break;
 		}
 
@@ -622,6 +622,8 @@ public class DraftTimerScript : MonoBehaviour
 		else
 		{
 			pickInfo[currentRound][currentPick].playerPicked = playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text);
+			pickInfo[currentRound][currentPick].roundNumber = currentRound;
+			pickInfo[currentRound][currentPick].pickNumber = currentPick;
 			playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].allPlayerPicks.Add(pickInfo[currentRound][currentPick].playerPicked);
 		}
 
@@ -829,11 +831,14 @@ public class DraftTimerScript : MonoBehaviour
 		lineToWrite.Append(playerProfiles[(int)drafter].threeYearContract.playerName);
 		lineToWrite.Append("*3:");
 
+		playerProfiles[(int)drafter].allPlayerPicks.Add(playerProfiles[(int)drafter].threeYearContract);
+
 		// Append two year contracts
 		foreach(PlayerDatabase.PlayerData contract in playerProfiles[(int)drafter].twoYearContracts)
 		{
 			lineToWrite.Append(contract.playerName);
 			lineToWrite.Append("*2:");
+			playerProfiles[(int)drafter].allPlayerPicks.Add(contract);
 		}
 
 		// Append one year contracts
@@ -841,6 +846,7 @@ public class DraftTimerScript : MonoBehaviour
 		{
 			lineToWrite.Append(contract.playerName);
 			lineToWrite.Append("*1:");
+			playerProfiles[(int)drafter].allPlayerPicks.Add(contract);
 		}
 
 		contractWriter.WriteLine(lineToWrite);
@@ -960,81 +966,13 @@ public class DraftTimerScript : MonoBehaviour
 	}
 
 	public GameObject DraftCompleteMessage;
-	public GameObject FinishedBarTemplate;
-
-	// Min/Max bar height
-	public float minBarHeight;
-	public float maxBarHeight;
-
-	// Min/Max bar scale
-	public float minBarScale;
-	public float maxBarScale;
-
-	// Animation time (speed)
-	public float minBarTime;
-	public float maxBarTime;
-
-	public class FinishedBar
-	{
-		public GameObject barObject;
-		public float timeAlive;
-	}
 
 	// Bar spawn timer
-	private float nextBarSpawnTime;
-	private float barSpawningTimer;
-	public float minBarSpawningTime;
-	public float maxBarSpawningTime;
-
-	private List<FinishedBar> finishedBarList;
 	bool finishedDraftAnimationStarted = false;
-	public void DraftFinishedAnimation()
+	public void StartPostDraftStats()
 	{
-		if(!finishedDraftAnimationStarted)
-		{
-			DraftCompleteMessage.transform.DOMoveX(0, animationTime / 2.0f).SetEase(Ease.InQuad);
-			finishedDraftAnimationStarted = true;
+		DraftCompleteMessage.GetComponent<DraftStatsController>().StartDisplayingDraftStats();
 
-			finishedBarList = new List<FinishedBar>();
-		}
-		else
-		{
-			// Check for bar spawning
-			barSpawningTimer += Time.deltaTime;
-
-			// Bar should spawn
-			if(barSpawningTimer >= nextBarSpawnTime)
-			{
-				// Set up the timer for the next bar
-				barSpawningTimer = 0;
-				nextBarSpawnTime = UnityEngine.Random.Range(minBarSpawningTime, maxBarSpawningTime);
-
-				for(int i = 0; i < 4; ++i)
-				{
-					FinishedBar newBar = new FinishedBar();
-					float barScale = UnityEngine.Random.Range(minBarScale, maxBarScale);
-					float barHeight = UnityEngine.Random.Range(minBarHeight, maxBarHeight);
-					newBar.barObject = Instantiate(FinishedBarTemplate, new Vector3(-21, barHeight, 1), Quaternion.identity);
-					newBar.barObject.transform.localScale = new Vector3(barScale, barScale);
-					newBar.barObject.GetComponent<SpriteRenderer>().color = new Color(0, 0.7764f + UnityEngine.Random.Range(-0.2f, 0.2f), 0.6117f + UnityEngine.Random.Range(-0.2f, 0.2f), 0.5f);
-					newBar.timeAlive = UnityEngine.Random.Range(minBarTime, maxBarTime);
-					finishedBarList.Add(newBar);
-					newBar.barObject.transform.DOMoveX(21, newBar.timeAlive);
-				}
-			}
-			
-			// Loop through the bar to update timer and check to destroy bars
-			for(int i = 0; i < finishedBarList.Count; ++i)
-			{
-				finishedBarList[i].timeAlive -= Time.deltaTime;
-
-				if (finishedBarList[i].timeAlive <= 0)
-				{
-					Destroy(finishedBarList[i].barObject);
-					finishedBarList.RemoveAt(i);
-					--i;
-				}
-			}
-		}
+		GoToDraftState(DraftState.DraftStopped);
 	}
 }
