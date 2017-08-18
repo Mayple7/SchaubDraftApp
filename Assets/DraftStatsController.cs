@@ -51,6 +51,6 @@ public class DraftStatsController : MonoBehaviour
 
 	public void StartDisplayingDraftStats()
 	{
-
+		
 	}
 }

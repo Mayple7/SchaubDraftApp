@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 using System;
 using System.IO;
@@ -120,7 +119,6 @@ public class PlayerDatabase
 			string playerLine = reader.ReadLine();
 			string[] playerFields = playerLine.Split(',');
 			playerFields[3] = new String(playerFields[3].Where(c => (c < '0' || c > '9')).ToArray());
-			Debug.Log(playerFields[0] + " : " + playerFields[3]);
 
 			PlayerData newData = new PlayerData();
 			newData.overallRank = Convert.ToUInt32(playerFields[0]);
@@ -299,5 +297,94 @@ public class PlayerDatabase
 		{
 			return searchResults.First().playerName;
 		}
+	}
+
+	public PlayerData[] GetBestAvailablePlayers()
+	{
+		PlayerData[] bestAvailable = new PlayerData[5];
+
+		int qbIndex = 0;
+		int rbIndex = 0;
+		int wrIndex = 0;
+		int teIndex = 0;
+		int kIndex = 0;
+		int defIndex = 0;
+
+		// Loop to add to best available players
+		for (int i = 0; i < 5; ++i)
+		{
+			uint minRank = Math.Min(qbList[qbIndex].overallRank, Math.Min(rbList[rbIndex].overallRank, Math.Min(wrList[wrIndex].overallRank, Math.Min(teList[teIndex].overallRank, Math.Min(kList[kIndex].overallRank, defList[defIndex].overallRank)))));
+
+			// QB is lowest
+			if (qbList[qbIndex].overallRank == minRank)
+			{
+				bestAvailable[i] = qbList[qbIndex];
+				++qbIndex;
+			}
+			// RB is lowest
+			else if (rbList[rbIndex].overallRank == minRank)
+			{
+				bestAvailable[i] = rbList[rbIndex];
+				++rbIndex;
+			}
+			// WR is lowest
+			else if (wrList[wrIndex].overallRank == minRank)
+			{
+				bestAvailable[i] = wrList[wrIndex];
+				++wrIndex;
+			}
+			// TE is lowest
+			else if (teList[teIndex].overallRank == minRank)
+			{
+				bestAvailable[i] = teList[teIndex];
+				++teIndex;
+			}
+			// K is lowest
+			else if (kList[kIndex].overallRank == minRank)
+			{
+				bestAvailable[i] = kList[kIndex];
+				++kIndex;
+			}
+			// DEF is lowest
+			else
+			{
+				bestAvailable[i] = defList[defIndex];
+				++defIndex;
+			}
+		}
+
+		return bestAvailable;
+	}
+
+	public PlayerData[] GetBestPositionPlayers(Position playerPosition)
+	{
+		PlayerData[] bestAvailable = new PlayerData[5];
+
+		for(int i = 0; i < 5; ++i)
+		{
+			switch (playerPosition)
+			{
+				case Position.QB:
+					bestAvailable[i] = qbList[i];
+					break;
+				case Position.RB:
+					bestAvailable[i] = rbList[i];
+					break;
+				case Position.WR:
+					bestAvailable[i] = wrList[i];
+					break;
+				case Position.TE:
+					bestAvailable[i] = teList[i];
+					break;
+				case Position.K:
+					bestAvailable[i] = kList[i];
+					break;
+				case Position.DEF:
+					bestAvailable[i] = defList[i];
+					break;
+			}
+		}
+
+		return bestAvailable;
 	}
 }

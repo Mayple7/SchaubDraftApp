@@ -139,7 +139,7 @@ public class DraftTimerScript : MonoBehaviour
 	public Sprite RandomPickSprite;
 
   // Draft data
-  private List<PickInfo>[] pickInfo;  // Array of List of PickInfos
+  public List<PickInfo>[] pickInfo;  // Array of List of PickInfos
   private int currentRound = 0;
   private int currentPick = 0;
 
@@ -160,6 +160,8 @@ public class DraftTimerScript : MonoBehaviour
 	private Text pickTimerText;
 
 	public PlayerDatabase playerDatabase;
+
+	public GameObject bestAvailableController;
 
 	// Use this for initialization
 	void Start ()
@@ -343,6 +345,8 @@ public class DraftTimerScript : MonoBehaviour
 		pickTimerText.transform.DOMoveY(-1.4f, animationTime);
 		TimerStateOverlay.transform.DOMoveY(-0.75f, animationTime);
 		makePickButton.transform.DOMoveY(-3, animationTime);
+
+		bestAvailableController.GetComponent<BestAvailableController>().SetBestAvailableControllerRunning(true);
 
 		GoToDraftState(DraftState.AnimateToNextDrafter);
 
