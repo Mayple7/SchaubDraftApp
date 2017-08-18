@@ -46,9 +46,19 @@ public class PlayerProfile
   public Sprite playerNameplate;
   public float bonusTimeRemaining;
 	public float totalTimeUsed = 0;
+    public float averageTimeUsed = 0;
 
-	// Max Contracted Players
-	public int totalContractedPlayers = 0;
+    //stats
+    public int mostPlayersOnSingleByeWeek = 0;
+    public int leastPlayersOnSingleByeWeek = 0;
+    //lower = more diverse
+    public float diversity = 0;
+    public int mostPlayersOnOneTeam = 0;
+    public uint draftGradeNumber = 0;
+    public string draftGrade = null;
+
+    // Max Contracted Players
+    public int totalContractedPlayers = 0;
 	public int picksToDelay = 0;
 
 	// Holds old contracted players
@@ -139,7 +149,7 @@ public class DraftTimerScript : MonoBehaviour
 	public Sprite RandomPickSprite;
 
   // Draft data
-  private List<PickInfo>[] pickInfo;  // Array of List of PickInfos
+  public List<PickInfo>[] pickInfo;  // Array of List of PickInfos
   private int currentRound = 0;
   private int currentPick = 0;
 
