@@ -342,9 +342,9 @@ public class DraftTimerScript : MonoBehaviour
 
 		GameObject.Find("PauseButton").GetComponent<PauseButton>().Show();
 
-		pickTimerText.transform.DOMoveY(-1.4f, animationTime);
+		pickTimerText.transform.DOMoveY(-1.9f, animationTime);
 		TimerStateOverlay.transform.DOMoveY(-0.75f, animationTime);
-		makePickButton.transform.DOMoveY(-3, animationTime);
+		makePickButton.transform.DOMoveY(-3.25f, animationTime);
 
 		bestAvailableController.GetComponent<BestAvailableController>().SetBestAvailableControllerRunning(true);
 
@@ -458,7 +458,7 @@ public class DraftTimerScript : MonoBehaviour
 			if (newDrafterNameplate)
 			{
 				newDrafterNameplate.transform.DOMoveX(0, animationTime).SetEase(Ease.InOutQuad);
-				newDrafterNameplate.transform.DOMoveY(0, animationTime).SetEase(Ease.OutQuad);
+				newDrafterNameplate.transform.DOMoveY(-0.5f, animationTime).SetEase(Ease.OutQuad);
 
 				currentAlphaValue = newDrafterNameplate.GetComponent<SpriteRenderer>().color.a;
 				DOTween.To(()=>currentAlphaValue, x=>currentAlphaValue = x, 1.0f, animationTime);

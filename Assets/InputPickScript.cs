@@ -12,8 +12,8 @@ public class InputPickScript : MonoBehaviour
 	public Sprite redXMark;
 
 	// Input field positions
-	private Vector3 DisplayPosition = new Vector3(-1.9f, -3, 0);
-	private Vector3 HiddenPosition = new Vector3(-15, -3, 0);
+	private Vector3 DisplayPosition = new Vector3(-1.9f, -3.25f, 0);
+	private Vector3 HiddenPosition = new Vector3(-15, -3.25f, 0);
 
 	// Reference to the main script
 	private DraftTimerScript timerScript;
@@ -31,6 +31,7 @@ public class InputPickScript : MonoBehaviour
 	{
 		if(gameObject.GetComponent<InputField>().IsInteractable())
 		{
+			// Auto complete with hitting tab.
 			if(Input.GetKeyUp(KeyCode.Tab))
 			{
 				int numMatches = timerScript.playerDatabase.NumMatchingPlayers(gameObject.GetComponent<InputField>().text);
@@ -39,6 +40,28 @@ public class InputPickScript : MonoBehaviour
 				{
 					gameObject.GetComponent<InputField>().text = timerScript.playerDatabase.GetSearchResult();
 					gameObject.GetComponent<InputField>().caretPosition = gameObject.GetComponent<InputField>().text.Length;
+				}
+			}
+
+			// Enter the draft pick with return.
+			if(Input.GetKeyUp(KeyCode.Return))
+			{
+				int numMatches = timerScript.playerDatabase.NumMatchingPlayers(gameObject.GetComponent<InputField>().text);
+
+				// Player Found
+				if (numMatches == 1)
+				{
+					if(gameObject.GetComponent<InputField>().text == timerScript.playerDatabase.GetSearchResult())
+					{
+						timerScript.PickConfirmed();
+					}
+				}
+				else
+				{
+					gameObject.GetComponent<InputField>().ActivateInputField();
+					gameObject.GetComponent<InputField>().caretPosition = gameObject.GetComponent<InputField>().text.Length;
+					gameObject.GetComponent<InputField>().selectionAnchorPosition = gameObject.GetComponent<InputField>().text.Length;
+					gameObject.GetComponent<InputField>().MoveTextEnd(false);
 				}
 			}
 		}

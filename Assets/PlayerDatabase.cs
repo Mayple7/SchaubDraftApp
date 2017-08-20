@@ -299,6 +299,7 @@ public class PlayerDatabase
 		}
 	}
 
+	private uint arbitraryMaxRank = 9001;
 	public PlayerData[] GetBestAvailablePlayers()
 	{
 		PlayerData[] bestAvailable = new PlayerData[5];
@@ -310,10 +311,54 @@ public class PlayerDatabase
 		int kIndex = 0;
 		int defIndex = 0;
 
+		uint qbRank = arbitraryMaxRank;
+		uint rbRank = arbitraryMaxRank;
+		uint wrRank = arbitraryMaxRank;
+		uint teRank = arbitraryMaxRank;
+		uint kRank = arbitraryMaxRank;
+		uint defRank = arbitraryMaxRank;
+
+		if (qbList.Count > 0)
+		{
+			qbRank = qbList[0].overallRank;
+		}
+
+		if (rbList.Count > 0)
+		{
+			rbRank = rbList[0].overallRank;
+		}
+
+		if (wrList.Count > 0)
+		{
+			wrRank = wrList[0].overallRank;
+		}
+
+		if (teList.Count > 0)
+		{
+			teRank = teList[0].overallRank;
+		}
+
+		if (kList.Count > 0)
+		{
+			kRank = kList[0].overallRank;
+		}
+
+		if (defList.Count > 0)
+		{
+			defRank = defList[0].overallRank;
+		}
+
+
 		// Loop to add to best available players
 		for (int i = 0; i < 5; ++i)
 		{
-			uint minRank = Math.Min(qbList[qbIndex].overallRank, Math.Min(rbList[rbIndex].overallRank, Math.Min(wrList[wrIndex].overallRank, Math.Min(teList[teIndex].overallRank, Math.Min(kList[kIndex].overallRank, defList[defIndex].overallRank)))));
+			uint minRank = Math.Min(qbRank, Math.Min(rbRank, Math.Min(wrRank, Math.Min(teRank, Math.Min(kRank, defRank)))));
+
+			if(minRank == arbitraryMaxRank)
+			{
+				bestAvailable[i] = null;
+				continue;
+			}
 
 			// QB is lowest
 			if (qbList[qbIndex].overallRank == minRank)
@@ -365,22 +410,64 @@ public class PlayerDatabase
 			switch (playerPosition)
 			{
 				case Position.QB:
-					bestAvailable[i] = qbList[i];
+					if(i < qbList.Count)
+					{
+						bestAvailable[i] = qbList[i];
+					}
+					else
+					{
+						bestAvailable[i] = null;
+					}
 					break;
 				case Position.RB:
-					bestAvailable[i] = rbList[i];
+					if (i < rbList.Count)
+					{ 
+						bestAvailable[i] = rbList[i];
+					}
+					else
+					{
+						bestAvailable[i] = null;
+					}
 					break;
 				case Position.WR:
-					bestAvailable[i] = wrList[i];
+					if (i < wrList.Count)
+					{
+						bestAvailable[i] = wrList[i];
+					}
+					else
+					{
+						bestAvailable[i] = null;
+					}
 					break;
 				case Position.TE:
-					bestAvailable[i] = teList[i];
+					if (i < teList.Count)
+					{
+						bestAvailable[i] = teList[i];
+					}
+					else
+					{
+						bestAvailable[i] = null;
+					}
 					break;
 				case Position.K:
-					bestAvailable[i] = kList[i];
+					if (i < kList.Count)
+					{
+						bestAvailable[i] = kList[i];
+					}
+					else
+					{
+						bestAvailable[i] = null;
+					}
 					break;
 				case Position.DEF:
-					bestAvailable[i] = defList[i];
+					if (i < defList.Count)
+					{
+						bestAvailable[i] = defList[i];
+					}
+					else
+					{
+						bestAvailable[i] = null;
+					}
 					break;
 			}
 		}

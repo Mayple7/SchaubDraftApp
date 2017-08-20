@@ -130,7 +130,17 @@ public class BestAvailableController : MonoBehaviour
 		// Assign best players to the correct location
 		for(int i = 0; i < 5; ++i)
 		{
-			GameObject backdrop = dataBackdrops[i];
+			GameObject backdrop;
+
+			if (bestPlayers[i] == null)
+			{
+				backdrop = dataBackdrops[i];
+				backdrop.GetComponentInChildren<TextMesh>().text = string.Empty;
+				backdrop.GetComponent<SpriteRenderer>().sprite = teamBackgroundSprites[(int)PlayerDatabase.NFLTeam.FA];
+				continue;
+			}
+
+			backdrop = dataBackdrops[i];
 			backdrop.GetComponentInChildren<TextMesh>().text = bestPlayers[i].playerName;
 			backdrop.GetComponent<SpriteRenderer>().sprite = teamBackgroundSprites[(int)bestPlayers[i].nflTeam];
 		}
@@ -153,7 +163,10 @@ public class BestAvailableController : MonoBehaviour
 				default:
 					if (currentTimer > nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
 					{
-						dataBackdrops[currentAnimatedBackdrop].transform.DOMoveX(showXPosition, timerScript.animationTime);
+						if(dataBackdrops[currentAnimatedBackdrop].GetComponentInChildren<TextMesh>().text != string.Empty)
+						{
+							dataBackdrops[currentAnimatedBackdrop].transform.DOMoveX(showXPosition, timerScript.animationTime);
+						}
 						++currentAnimatedBackdrop;
 					}
 					break;

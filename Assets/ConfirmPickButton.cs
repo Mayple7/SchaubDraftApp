@@ -11,8 +11,8 @@ public class ConfirmPickButton : MonoBehaviour
 	public Sprite clickSprite;
 
 	// Button positions
-	private Vector3 DisplayPosition = new Vector3(5, -3, 0);
-	private Vector3 HiddenPosition = new Vector3(12, -3, 0);
+	private Vector3 DisplayPosition = new Vector3(5, -3.25f, 0);
+	private Vector3 HiddenPosition = new Vector3(12, -3.25f, 0);
 
 	// Reference to the main script
 	private DraftTimerScript timerScript;

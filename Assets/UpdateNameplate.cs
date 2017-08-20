@@ -13,6 +13,9 @@ public class UpdateNameplate : MonoBehaviour
 	// This nameplate's drafterID
 	private DrafterEnum drafterID = DrafterEnum.Dan;
 
+	// PositionInfos
+	public GameObject[] positionTags;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -39,5 +42,10 @@ public class UpdateNameplate : MonoBehaviour
 
 		// Set the text mesh 
 		textMesh.text = minutes + ":" + seconds;
+	}
+
+	public void ShowPositionNeeds()
+	{
+
 	}
 }
