@@ -15,7 +15,8 @@ public class PlayerDatabase
 		WR,
 		TE,
 		K,
-		DEF
+		DEF,
+		NoPosition
 	}
 
 	public enum NFLTeam
@@ -200,7 +201,7 @@ public class PlayerDatabase
 			newPlayer.playerName = playerName;
 			newPlayer.overallRank = 500;
 			newPlayer.nflTeam = NFLTeam.FA;
-			newPlayer.position = Position.DEF;
+			newPlayer.position = Position.NoPosition;
 			newPlayer.byeWeek = 0;
 			return newPlayer;
 		}
@@ -365,36 +366,84 @@ public class PlayerDatabase
 			{
 				bestAvailable[i] = qbList[qbIndex];
 				++qbIndex;
+				if(qbIndex >= qbList.Count)
+				{
+					qbRank = arbitraryMaxRank;
+				}
+				else
+				{
+					qbRank = qbList[qbIndex].overallRank;
+				}
 			}
 			// RB is lowest
 			else if (rbList[rbIndex].overallRank == minRank)
 			{
 				bestAvailable[i] = rbList[rbIndex];
 				++rbIndex;
+				if (rbIndex >= rbList.Count)
+				{
+					rbRank = arbitraryMaxRank;
+				}
+				else
+				{
+					rbRank = rbList[rbIndex].overallRank;
+				}
 			}
 			// WR is lowest
 			else if (wrList[wrIndex].overallRank == minRank)
 			{
 				bestAvailable[i] = wrList[wrIndex];
 				++wrIndex;
+				if (wrIndex >= wrList.Count)
+				{
+					wrRank = arbitraryMaxRank;
+				}
+				else
+				{
+					wrRank = wrList[wrIndex].overallRank;
+				}
 			}
 			// TE is lowest
 			else if (teList[teIndex].overallRank == minRank)
 			{
 				bestAvailable[i] = teList[teIndex];
 				++teIndex;
+				if (teIndex >= teList.Count)
+				{
+					teRank = arbitraryMaxRank;
+				}
+				else
+				{
+					teRank = teList[teIndex].overallRank;
+				}
 			}
 			// K is lowest
 			else if (kList[kIndex].overallRank == minRank)
 			{
 				bestAvailable[i] = kList[kIndex];
 				++kIndex;
+				if (kIndex >= kList.Count)
+				{
+					kRank = arbitraryMaxRank;
+				}
+				else
+				{
+					kRank = kList[kIndex].overallRank;
+				}
 			}
 			// DEF is lowest
 			else
 			{
 				bestAvailable[i] = defList[defIndex];
 				++defIndex;
+				if (defIndex >= qbList.Count)
+				{
+					defRank = arbitraryMaxRank;
+				}
+				else
+				{
+					defRank = defList[defIndex].overallRank;
+				}
 			}
 		}
 

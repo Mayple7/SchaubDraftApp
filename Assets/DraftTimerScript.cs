@@ -46,6 +46,16 @@ public class PlayerProfile
   public Sprite playerNameplate;
   public float bonusTimeRemaining;
 	public float totalTimeUsed = 0;
+	public float averageTimeUsed = 0;
+
+	// Stats
+	public int mostPlayersOnSingleByeWeek = 0;
+
+	//lower = more diverse
+	public int numTeamsDrafted = 0;
+	public int mostPlayersOnOneTeam = 0;
+	public uint draftGradeNumber = 0;
+	public string draftGrade = null;
 
 	// Max Contracted Players
 	public int totalContractedPlayers = 0;
@@ -417,6 +427,7 @@ public class DraftTimerScript : MonoBehaviour
 				GoToDraftState(DraftState.CountdownPickTimer);
 				animationInitialized = false;
 				pickTimerText.color = WhiteOpaque;
+				newDrafterNameplate.GetComponent<UpdateNameplate>().ShowPositionNeeds();
 
 				currentPickTime = maxPickTime;
 
@@ -969,13 +980,14 @@ public class DraftTimerScript : MonoBehaviour
 		return DraftOrder;
 	}
 
-	public GameObject DraftCompleteMessage;
+	public GameObject DraftStatsController;
 
 	// Bar spawn timer
 	bool finishedDraftAnimationStarted = false;
 	public void StartPostDraftStats()
 	{
-		DraftCompleteMessage.GetComponent<DraftStatsController>().StartDisplayingDraftStats();
+		DraftStatsController.GetComponent<DraftStatsController>().StartDisplayingDraftStats();
+		bestAvailableController.GetComponent<BestAvailableController>().SetBestAvailableControllerRunning(false);
 
 		GoToDraftState(DraftState.DraftStopped);
 	}
