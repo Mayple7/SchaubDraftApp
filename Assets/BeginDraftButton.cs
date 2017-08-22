@@ -31,12 +31,12 @@ public class BeginDraftButton : MonoBehaviour
 
 	public void Show()
 	{
-		this.transform.DOMove(DisplayPosition, timerScript.animationTime);
+		this.transform.DOMove(DisplayPosition, timerScript.quickAnimationTime);
 	}
 
 	public void Hide()
 	{
-		this.transform.DOMove(HiddenPosition, timerScript.animationTime);
+		this.transform.DOMove(HiddenPosition, timerScript.quickAnimationTime);
 	}
 
 	void OnMouseEnter()

@@ -157,7 +157,7 @@ public class BestAvailableController : MonoBehaviour
 			{
 				// Header, just animate it right away
 				case -1:
-					headerObject.transform.DOMoveX(showXPosition, timerScript.animationTime);
+					headerObject.transform.DOMoveX(showXPosition, timerScript.quickAnimationTime);
 					++currentAnimatedBackdrop;
 					break;
 				default:
@@ -165,7 +165,7 @@ public class BestAvailableController : MonoBehaviour
 					{
 						if(dataBackdrops[currentAnimatedBackdrop].GetComponentInChildren<TextMesh>().text != string.Empty)
 						{
-							dataBackdrops[currentAnimatedBackdrop].transform.DOMoveX(showXPosition, timerScript.animationTime);
+							dataBackdrops[currentAnimatedBackdrop].transform.DOMoveX(showXPosition, timerScript.quickAnimationTime);
 						}
 						++currentAnimatedBackdrop;
 					}
@@ -175,7 +175,7 @@ public class BestAvailableController : MonoBehaviour
 		// Done starting animation just waiting for time to be done
 		else
 		{
-			if(currentTimer > timerScript.animationTime + nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
+			if(currentTimer > timerScript.quickAnimationTime + nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
 			{
 				currentAnimatedBackdrop = -1;
 				currentTimer = 0;
@@ -195,13 +195,13 @@ public class BestAvailableController : MonoBehaviour
 			{
 				// Header, just animate it right away
 				case -1:
-					headerObject.transform.DOMoveX(hideXPosition, timerScript.animationTime);
+					headerObject.transform.DOMoveX(hideXPosition, timerScript.quickAnimationTime);
 					++currentAnimatedBackdrop;
 					break;
 				default:
 					if (currentTimer > nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
 					{
-						dataBackdrops[currentAnimatedBackdrop].transform.DOMoveX(hideXPosition, timerScript.animationTime);
+						dataBackdrops[currentAnimatedBackdrop].transform.DOMoveX(hideXPosition, timerScript.quickAnimationTime);
 						++currentAnimatedBackdrop;
 					}
 					break;
@@ -210,7 +210,7 @@ public class BestAvailableController : MonoBehaviour
 		// Done starting animation just waiting for time to be done
 		else
 		{
-			if (currentTimer > timerScript.animationTime + nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
+			if (currentTimer > timerScript.quickAnimationTime + nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
 			{
 				currentAnimatedBackdrop = -1;
 				currentTimer = 0;
@@ -227,12 +227,12 @@ public class BestAvailableController : MonoBehaviour
 		if(!bestAvailableRunning)
 		{
 			headerObject.transform.DOKill();
-			headerObject.transform.DOMoveX(hideXPosition, timerScript.animationTime);
+			headerObject.transform.DOMoveX(hideXPosition, timerScript.quickAnimationTime);
 
 			foreach(GameObject backdrop in dataBackdrops)
 			{
 				backdrop.transform.DOKill();
-				backdrop.transform.DOMoveX(hideXPosition, timerScript.animationTime);
+				backdrop.transform.DOMoveX(hideXPosition, timerScript.quickAnimationTime);
 			}
 		}
 	}
