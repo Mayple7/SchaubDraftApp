@@ -12,7 +12,7 @@ public class InputPickScript : MonoBehaviour
 	public Sprite redXMark;
 
 	// Input field positions
-	private Vector3 DisplayPosition = new Vector3(-1.9f, -3.25f, 0);
+	private Vector3 DisplayPosition = new Vector3(0.0f, -3.25f, 0);
 	private Vector3 HiddenPosition = new Vector3(-15, -3.25f, 0);
 
 	// Reference to the main script

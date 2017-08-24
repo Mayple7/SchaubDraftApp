@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
-public class ConfirmPickButton : MonoBehaviour
+public class AutoPickButton : MonoBehaviour
 {
 	// Sprites for button states
 	public Sprite defaultSprite;
@@ -11,11 +12,15 @@ public class ConfirmPickButton : MonoBehaviour
 	public Sprite clickSprite;
 
 	// Button positions
-	private Vector3 DisplayPosition = new Vector3(6.5f, -3.25f, 0);
-	private Vector3 HiddenPosition = new Vector3(12, -3.25f, 0);
+	private Vector3 DisplayPosition = new Vector3(0, 0, 0);
+	private Vector3 HiddenPosition = new Vector3(0, -10, 0);
 
 	// Reference to the main script
 	private DraftTimerScript timerScript;
+
+	public GameObject inputPickField;
+
+	private string autoPickPlayer = string.Empty;
 
 	// Use this for initialization
 	void Start()
@@ -54,12 +59,18 @@ public class ConfirmPickButton : MonoBehaviour
 	{
 		this.GetComponent<SpriteRenderer>().sprite = hoverSprite;
 
-		// Notify our timer script that the pick has been confirmed
-		timerScript.PickConfirmed();
+		// Puts the top pick into the auto draft slot
+		inputPickField.GetComponent<InputField>().text = autoPickPlayer;
 	}
 
 	private void OnMouseExit()
 	{
 		this.GetComponent<SpriteRenderer>().sprite = defaultSprite;
 	}
+
+	public void SetAutoPickPlayer(string playerName)
+	{
+		autoPickPlayer = playerName;
+	}
+
 }
