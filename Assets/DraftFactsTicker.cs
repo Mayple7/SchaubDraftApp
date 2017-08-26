@@ -59,8 +59,14 @@ public class DraftFactsTicker : MonoBehaviour
 		"Championship Records: The most points scored in a championship game was Patrick with 158 points in the 2016 title game.",
 		"Work Work Work: This draft app took 2 weekends to create. While coming up with these little tidbits of league history took 2 full weeks.",
 		"Rivalry Weeks! The first year with rivalry weeks was the 2009 season which had only 1 rivalry week. The 2015 season however, has the first instance of inter-division only games in the last 3 weeks of the season.",
-		"Lots Of Facts! There are a total of 50 bits of information being displayed here. Don't miss them!"
+		"Purple Drank: Hans is the perennial Vikings drafter by drafting players that would normally go undrafted in standard leagues.",
+		"A Winner's Plea: The contract system of handling keepers was developed after Doug said it was too obvious to pick keepers each year.",
+		"Trade's Ahoy! With new clarification on how extra keepers or less keepers are dealt with, perhaps more trades involving the top players will be made.",
+		"The Worst Person: Parks is a Packer fan. That makes him the worst.",
+		"Cross Country! With players in Florida, New York and Washington, our league has players all across the country!",
+		"Lots Of Facts! There are over 50 bits of information and history being displayed here. Don't miss any of them!"
 	};
+
 	private List<string> usedFactsList = new List<string>();
 	int currentFactIndex = 0;
 

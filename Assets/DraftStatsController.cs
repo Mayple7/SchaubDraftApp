@@ -53,7 +53,7 @@ public class DraftStatsController : MonoBehaviour
 	public GameObject topStringObject;
 	public GameObject botStringObject;
 
-	private float currentTimer = 0;
+	private float currentTimer = 5;
 	private float maxTime = 5;
 
 	public float slowAnimationTime = 8;
@@ -280,6 +280,12 @@ public class DraftStatsController : MonoBehaviour
 		{
 			foreach (PickInfo pick in pickList)
 			{                
+				// Skip if pick is null
+				if(pick.playerPicked == null)
+				{
+					continue;
+				}
+
 				//larger negative = worse value, larger postive = greater value. 0 = at cost value;
 				long value = pickNumber - pick.playerPicked.overallRank;
 				if (value > bestValue)

@@ -40,7 +40,7 @@ public class BestAvailableController : MonoBehaviour
 	private int currentAnimatedBackdrop = -1;
 
 	private DisplayState currentDisplayState = DisplayState.HideState;
-	private BestAvailableOption currentDisplayOption = BestAvailableOption.TopAvailable;
+	private BestAvailableOption currentDisplayOption = BestAvailableOption.TopDEFs;
 
 	private float currentTimer = 0;
 	public float nextBackdropDelay = 0.25f;

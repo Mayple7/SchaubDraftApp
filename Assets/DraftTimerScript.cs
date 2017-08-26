@@ -140,7 +140,7 @@ public class DraftTimerScript : MonoBehaviour
 
   // Pick time variables
   public float maxBonusTime = 5 * 60; // 5 min bonus time
-  private float maxPickTime = 5.0f;      // 1 min pick timer
+  public float maxPickTime = 5.0f;      // 1 min pick timer
   private float currentPickTime = 0;
 
 	public GameObject TimerStateOverlay;
@@ -886,7 +886,7 @@ public class DraftTimerScript : MonoBehaviour
 
 	public void SerializeDraftData()
   {
-		if(!String.IsNullOrEmpty(pickInfo[currentRound][currentPick].playerPicked.playerName))
+		if(pickInfo[currentRound][currentPick].playerPicked != null && !String.IsNullOrEmpty(pickInfo[currentRound][currentPick].playerPicked.playerName))
 		{
 			string lineToWrite = (currentRound + 1) + ":" + (currentPick + 1) + ":" + DrafterNames[(int)pickInfo[currentRound][currentPick].drafterID] + ":" + pickInfo[currentRound][currentPick].playerPicked.playerName;
 			draftWriter.WriteLine(lineToWrite);
