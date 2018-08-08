@@ -96,6 +96,7 @@ public class ContractPlayerScript : MonoBehaviour
 					else
 					{
 						GameObject.Find("NextContractButton").GetComponent<NextContractButton>().Hide();
+						GameObject.Find("TradeButton").GetComponent<TradeButton>().Hide();
 						timerScript.StartMainDraft();
 						Destroy(gameObject);
 					}
@@ -111,6 +112,7 @@ public class ContractPlayerScript : MonoBehaviour
 			case ContractPhaseState.StoppedState:
 				currentContractPhase = ContractPhaseState.AnimateToNextDrafter;
 				GameObject.Find("NextContractButton").GetComponent<NextContractButton>().Show();
+				GameObject.Find("TradeButton").GetComponent<TradeButton>().Show();
 				InitializeContracts();
 				timerScript.SwitchRingColor(timerScript.ringBlue);
 				break;
