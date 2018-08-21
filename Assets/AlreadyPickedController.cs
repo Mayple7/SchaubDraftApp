@@ -1,21 +1,23 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
 using System.Collections.Generic;
-using UnityEngine;
-using DG.Tweening;
 using TMPro;
+using UnityEngine;
 
-public class BestAvailableController : MonoBehaviour
+public class AlreadyPickedController : MonoBehaviour
 {
 	// Best available order
-	enum BestAvailableOption
+	enum RecentlyPickedOrder
 	{
-		TopAvailable,
-		TopQBs,
-		TopRBs,
-		TopWRs,
-		TopTEs,
-		TopKs,
-		TopDEFs
+		RecentlyPicked,
+		CurrentRoster,
+
+		// Maybe recently picked by position.
+		/*RecentQBs,
+		RecentRBs,
+		RecentWRs,
+		RecentTEs,
+		RecentKs,
+		RecentDEFs*/
 	}
 
 	enum DisplayState
@@ -32,20 +34,22 @@ public class BestAvailableController : MonoBehaviour
 	public GameObject[] dataBackdrops;
 	public Sprite[] teamBackgroundSprites;
 
-	private float showXPosition = -6.7f;
-	private float hideXPosition = -11.25f;
+	private readonly float showXPosition = 6.7f;
+	private readonly float hideXPosition = 11.25f;
 
 	private DraftTimerScript timerScript;
-	private bool bestAvailableRunning = false;
+	private bool recentlyPickedRunning = false;
 
 	private int currentAnimatedBackdrop = -1;
 
 	private DisplayState currentDisplayState = DisplayState.HideState;
-	private BestAvailableOption currentDisplayOption = BestAvailableOption.TopDEFs;
+	private RecentlyPickedOrder currentDisplayOption = RecentlyPickedOrder.CurrentRoster;
 
 	private float currentTimer = 0;
 	public float nextBackdropDelay = 0.25f;
 	public float maxShowTime = 5;
+
+	private List<PlayerDatabase.PlayerData> pickHistory = new List<PlayerDatabase.PlayerData>();
 
 	// Use this for initialization
 	void Start ()
@@ -57,35 +61,35 @@ public class BestAvailableController : MonoBehaviour
 	void Update ()
 	{
 		// Only progress if we're running
-		if(bestAvailableRunning)
+		if (recentlyPickedRunning)
 		{
-			switch(currentDisplayState)
+			switch (currentDisplayState)
 			{
 				case DisplayState.HideState:
 					// Switch the names around for the next display state
-					SetBestAvailableNames();
+					this.SetRecentlyPickedNames();
 					currentDisplayState = DisplayState.AnimateIn;
 					currentTimer = 0;
 					break;
 				case DisplayState.AnimateIn:
-					AnimateInBackdrops();
+					this.AnimateInBackdrops();
 					break;
 				case DisplayState.ShowState:
 					currentTimer += Time.deltaTime;
-					if(currentTimer >= maxShowTime)
+					if (currentTimer >= maxShowTime)
 					{
 						currentDisplayState = DisplayState.AnimateOut;
 						currentTimer = 0;
 					}
 					break;
 				case DisplayState.AnimateOut:
-					AnimateOutBackdrop();
+					this.AnimateOutBackdrop();
 					break;
 			}
 		}
 	}
 
-	public void CycleBestAvailableList()
+	public void CycleRecentlyPickedList()
 	{
 		if (this.currentDisplayState == DisplayState.ShowState)
 		{
@@ -94,55 +98,46 @@ public class BestAvailableController : MonoBehaviour
 		}
 	}
 
-	private void SetBestAvailableNames()
+	public void AddPickToHistory(PlayerDatabase.PlayerData playerData)
+	{
+		this.pickHistory.Insert(0, playerData);
+		
+		// Keep history to max of 5 names.
+		if (this.pickHistory.Count > 5)
+		{
+			this.pickHistory.RemoveAt(this.pickHistory.Count - 1);
+		}
+	}
+
+	private void SetRecentlyPickedNames()
 	{
 		// Go to the next display option, and loop around if needed
 		currentDisplayOption += 1;
-		if(currentDisplayOption > BestAvailableOption.TopDEFs)
+		if (currentDisplayOption > RecentlyPickedOrder.CurrentRoster)
 		{
-			currentDisplayOption = BestAvailableOption.TopAvailable;
+			currentDisplayOption = RecentlyPickedOrder.RecentlyPicked;
 		}
 
 		// Best available overall
-		PlayerDatabase.PlayerData[] bestPlayers = new PlayerDatabase.PlayerData[5];
-		switch(currentDisplayOption)
+		List<PlayerDatabase.PlayerData> currentPlayerList = new List<PlayerDatabase.PlayerData>();
+		switch (currentDisplayOption)
 		{
-			case BestAvailableOption.TopAvailable:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available";
-				bestPlayers = timerScript.playerDatabase.GetBestAvailablePlayers();
+			case RecentlyPickedOrder.RecentlyPicked:
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Recently Picked";
+				currentPlayerList = this.pickHistory;
 				break;
-			case BestAvailableOption.TopQBs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available QBs";
-				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.QB);
-				break;
-			case BestAvailableOption.TopRBs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available RBs";
-				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.RB);
-				break;
-			case BestAvailableOption.TopWRs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available WRs";
-				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.WR);
-				break;
-			case BestAvailableOption.TopTEs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available TEs";
-				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.TE);
-				break;
-			case BestAvailableOption.TopKs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available Ks";
-				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.K);
-				break;
-			case BestAvailableOption.TopDEFs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available DEFs";
-				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.DEF);
+			case RecentlyPickedOrder.CurrentRoster:
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Current Roster";
+				currentPlayerList = this.GetCurrentRoster();
 				break;
 		}
-		
-		// Assign best players to the correct location
-		for(int i = 0; i < 5; ++i)
+			
+		// Assign players to correct location.
+		for (int i = 0; i < 5; ++i)
 		{
 			GameObject backdrop;
 
-			if (bestPlayers[i] == null)
+			if (i >= currentPlayerList.Count || currentPlayerList[i] == null)
 			{
 				backdrop = dataBackdrops[i];
 				backdrop.GetComponentInChildren<TextMeshPro>().text = string.Empty;
@@ -151,8 +146,8 @@ public class BestAvailableController : MonoBehaviour
 			}
 
 			backdrop = dataBackdrops[i];
-			backdrop.GetComponentInChildren<TextMeshPro>().text = bestPlayers[i].playerName;
-			backdrop.GetComponent<SpriteRenderer>().sprite = teamBackgroundSprites[(int)bestPlayers[i].nflTeam];
+			backdrop.GetComponentInChildren<TextMeshPro>().text = currentPlayerList[i].playerName;
+			backdrop.GetComponent<SpriteRenderer>().sprite = teamBackgroundSprites[(int)currentPlayerList[i].nflTeam];
 		}
 	}
 
@@ -161,7 +156,7 @@ public class BestAvailableController : MonoBehaviour
 		currentTimer += Time.deltaTime;
 
 		// Backdrops to animate in
-		if(currentAnimatedBackdrop < 5)
+		if (currentAnimatedBackdrop < 5)
 		{
 			switch (currentAnimatedBackdrop)
 			{
@@ -173,7 +168,7 @@ public class BestAvailableController : MonoBehaviour
 				default:
 					if (currentTimer > nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
 					{
-						if(dataBackdrops[currentAnimatedBackdrop].GetComponentInChildren<TextMeshPro>().text != string.Empty)
+						if (dataBackdrops[currentAnimatedBackdrop].GetComponentInChildren<TextMeshPro>().text != string.Empty)
 						{
 							dataBackdrops[currentAnimatedBackdrop].transform.DOMoveX(showXPosition, timerScript.quickAnimationTime);
 						}
@@ -185,7 +180,7 @@ public class BestAvailableController : MonoBehaviour
 		// Done starting animation just waiting for time to be done
 		else
 		{
-			if(currentTimer > timerScript.quickAnimationTime + nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
+			if (currentTimer > timerScript.quickAnimationTime + nextBackdropDelay + currentAnimatedBackdrop * nextBackdropDelay)
 			{
 				currentAnimatedBackdrop = -1;
 				currentTimer = 0;
@@ -229,21 +224,55 @@ public class BestAvailableController : MonoBehaviour
 		}
 	}
 
-	public void SetBestAvailableControllerRunning(bool running)
+	public void SetAlreadyPickedControllerRunning(bool running)
 	{
-		bestAvailableRunning = running;
+		this.recentlyPickedRunning = running;
 
 		// Set to not running, make sure to hide everything
-		if(!bestAvailableRunning)
+		if (!recentlyPickedRunning)
 		{
 			headerObject.transform.DOKill();
 			headerObject.transform.DOMoveX(hideXPosition, timerScript.quickAnimationTime);
 
-			foreach(GameObject backdrop in dataBackdrops)
+			foreach (GameObject backdrop in dataBackdrops)
 			{
 				backdrop.transform.DOKill();
 				backdrop.transform.DOMoveX(hideXPosition, timerScript.quickAnimationTime);
 			}
 		}
+	}
+
+	private List<PlayerDatabase.PlayerData> GetCurrentRoster()
+	{
+		// Get the current drafter.
+		DrafterEnum currentDrafter = timerScript.GetCurrentDrafter();
+
+		List<PlayerDatabase.PlayerData> rosterList = new List<PlayerDatabase.PlayerData>();
+
+		var allPlayerList = timerScript.playerProfiles[(int)currentDrafter].allPlayerPicks;
+
+		// Check if there are players in the all players list.
+		if (allPlayerList.Count > 0)
+		{
+			// Loop through the player list and add them all to the roster list.
+			for (int i = allPlayerList.Count - 1; i >= Mathf.Max(0, allPlayerList.Count - 5); --i)
+			{
+				rosterList.Add(allPlayerList[i]);
+			}
+		}
+		else
+		{
+			// Grab all contract players.
+			rosterList.AddRange(timerScript.playerProfiles[(int)currentDrafter].oneYearContracts);
+			rosterList.AddRange(timerScript.playerProfiles[(int)currentDrafter].twoYearContracts);
+			rosterList.Add(timerScript.playerProfiles[(int)currentDrafter].threeYearContract);
+
+			while (rosterList.Count > 5)
+			{
+				rosterList.RemoveAt(rosterList.Count - 1);
+			}
+		}
+
+		return rosterList;
 	}
 }

@@ -96,7 +96,7 @@ public class ContractPlayerScript : MonoBehaviour
 					else
 					{
 						GameObject.Find("NextContractButton").GetComponent<NextContractButton>().Hide();
-						GameObject.Find("TradeButton").GetComponent<TradeButton>().Hide();
+						//GameObject.Find("TradeButton").GetComponent<TradeButton>().Hide();
 						timerScript.StartMainDraft();
 						Destroy(gameObject);
 					}

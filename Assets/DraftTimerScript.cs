@@ -164,7 +164,6 @@ public class DraftTimerScript : MonoBehaviour
 	public GameObject draftOrderTickerTemplate;
 	private DraftOrderTicker draftOrderTicker;
 
-	public GameObject pickHistoryTicker;
 	public GameObject draftStatusText;
 
 	private Text pickTimerText;
@@ -242,6 +241,11 @@ public class DraftTimerScript : MonoBehaviour
 		InitializeDraftSerializer();
 	}
 
+	public DrafterEnum GetCurrentDrafter()
+	{
+		return pickInfo[currentRound][currentPick].drafterID;
+	}
+
 	public void BeginDraft()
 	{
 		GameObject.Find("BeginDraftButton").GetComponent<BeginDraftButton>().Hide();
@@ -303,26 +307,26 @@ public class DraftTimerScript : MonoBehaviour
 			// Compensation picks need to be added
 			if(contracts < 3)
 			{
-				// Compensation pick for 2 year contracts (after round 2)
+				// Compensation pick for 2 year contracts (after round 3)
 				if(playerProfiles[(int)drafter].twoYearContracts.Count == 0)
 				{
 					PickInfo newPick = new PickInfo();
 					newPick.drafterID = drafter;
-					newPick.roundNumber = 0;
-					newPick.pickNumber = pickInfo[1].Count;
+					newPick.roundNumber = 2;
+					newPick.pickNumber = pickInfo[2].Count;
 
-					pickInfo[1].Add(newPick);
+					pickInfo[2].Add(newPick);
 				}
 
-				// Compensation pick for 1 year contracts (after round 1)
+				// Compensation pick for 1 year contracts (after round 2)
 				if (playerProfiles[(int)drafter].oneYearContracts.Count == 0)
 				{
 					PickInfo newPick = new PickInfo();
 					newPick.drafterID = drafter;
-					newPick.roundNumber = 0;
-					newPick.pickNumber = pickInfo[0].Count;
+					newPick.roundNumber = 1;
+					newPick.pickNumber = pickInfo[1].Count;
 
-					pickInfo[0].Add(newPick);
+					pickInfo[1].Add(newPick);
 				}
 			}
 		}
@@ -357,6 +361,7 @@ public class DraftTimerScript : MonoBehaviour
 		makePickButton.transform.DOMoveY(-3.25f, quickAnimationTime);
 
 		bestAvailableController.GetComponent<BestAvailableController>().SetBestAvailableControllerRunning(true);
+		GameObject.Find("AlreadyPickedController").GetComponent<AlreadyPickedController>().SetAlreadyPickedControllerRunning(true);
 
 		GoToDraftState(DraftState.AnimateToNextDrafter);
 
@@ -592,6 +597,7 @@ public class DraftTimerScript : MonoBehaviour
 
 		// Contract data is not written
 		int currentDrafter = (int)pickInfo[currentRound][currentPick].drafterID;
+		PlayerDatabase.PlayerData currentPickedPlayer = playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text);
 		if (!playerProfiles[currentDrafter].contractDataWritten)
 		{
 			// Count all the contracts (everyone always has a 3year contract)
@@ -606,7 +612,7 @@ public class DraftTimerScript : MonoBehaviour
 				SerializeContractData(pickInfo[currentRound][currentPick].drafterID);
 				playerProfiles[currentDrafter].contractDataWritten = true;
 
-				pickInfo[currentRound][currentPick].playerPicked = playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text);
+				pickInfo[currentRound][currentPick].playerPicked = currentPickedPlayer;
 				playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].allPlayerPicks.Add(pickInfo[currentRound][currentPick].playerPicked);
 			}
 			else
@@ -615,14 +621,14 @@ public class DraftTimerScript : MonoBehaviour
 				if (playerProfiles[currentDrafter].twoYearContracts.Count == 0)
 				{
 					// Add player as 2 year contract
-					playerProfiles[currentDrafter].twoYearContracts.Add(playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text));
+					playerProfiles[currentDrafter].twoYearContracts.Add(currentPickedPlayer);
 					++contracts;
 				}
 				// One year contract slot is open
 				else if (playerProfiles[currentDrafter].oneYearContracts.Count == 0)
 				{
 					// Add player as 1 year contract
-					playerProfiles[currentDrafter].oneYearContracts.Add(playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text));
+					playerProfiles[currentDrafter].oneYearContracts.Add(currentPickedPlayer);
 					++contracts;
 				}
 
@@ -636,14 +642,15 @@ public class DraftTimerScript : MonoBehaviour
 		}
 		else
 		{
-			pickInfo[currentRound][currentPick].playerPicked = playerDatabase.PickPlayerFromDatabase(textBoxObject.GetComponent<InputField>().text);
+			pickInfo[currentRound][currentPick].playerPicked = currentPickedPlayer;
 			pickInfo[currentRound][currentPick].roundNumber = currentRound;
 			pickInfo[currentRound][currentPick].pickNumber = currentPick;
 			playerProfiles[(int)pickInfo[currentRound][currentPick].drafterID].allPlayerPicks.Add(pickInfo[currentRound][currentPick].playerPicked);
 		}
 
 		// Grab the pick text and clear the textbox.
-		pickHistoryTicker.GetComponent<PickHistoryTicker>().AddPickToHistory(textBoxObject.GetComponent<InputField>().text);
+		GameObject.Find("AlreadyPickedController").GetComponent<AlreadyPickedController>().AddPickToHistory(currentPickedPlayer);
+
 		textBoxObject.GetComponent<InputField>().text = "";
 		textBoxObject.GetComponent<InputPickScript>().Hide();
 		confirmPickButton.GetComponent<ConfirmPickButton>().Hide();
@@ -819,8 +826,7 @@ public class DraftTimerScript : MonoBehaviour
 		// Hide UI stuff
 		makePickButton.GetComponent<MakePickButton>().Hide();
 		newDrafterNameplate.transform.DOMoveX(endingNameplateX, animationTime).SetEase(Ease.InQuad);
-
-		pickHistoryTicker.GetComponent<PickHistoryTicker>().HideHistoryTicker();
+		GameObject.Find("TradeButton").GetComponent<TradeButton>().Hide();
 	}
 
 	private StreamWriter contractWriter;
@@ -988,6 +994,7 @@ public class DraftTimerScript : MonoBehaviour
 	{
 		DraftStatsController.GetComponent<DraftStatsController>().StartDisplayingDraftStats();
 		bestAvailableController.GetComponent<BestAvailableController>().SetBestAvailableControllerRunning(false);
+		GameObject.Find("AlreadyPickedController").GetComponent<AlreadyPickedController>().SetAlreadyPickedControllerRunning(false);
 
 		GoToDraftState(DraftState.DraftStopped);
 	}
