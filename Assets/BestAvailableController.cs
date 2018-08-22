@@ -108,31 +108,31 @@ public class BestAvailableController : MonoBehaviour
 		switch(currentDisplayOption)
 		{
 			case BestAvailableOption.TopAvailable:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available";
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Best Available";
 				bestPlayers = timerScript.playerDatabase.GetBestAvailablePlayers();
 				break;
 			case BestAvailableOption.TopQBs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available QBs";
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Best Available QBs";
 				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.QB);
 				break;
 			case BestAvailableOption.TopRBs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available RBs";
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Best Available RBs";
 				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.RB);
 				break;
 			case BestAvailableOption.TopWRs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available WRs";
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Best Available WRs";
 				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.WR);
 				break;
 			case BestAvailableOption.TopTEs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available TEs";
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Best Available TEs";
 				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.TE);
 				break;
 			case BestAvailableOption.TopKs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available Ks";
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Best Available Ks";
 				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.K);
 				break;
 			case BestAvailableOption.TopDEFs:
-				headerObject.GetComponentInChildren<TextMesh>().text = "Best Available DEFs";
+				headerObject.GetComponentInChildren<TextMeshPro>().text = "Best Available DEFs";
 				bestPlayers = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.DEF);
 				break;
 		}

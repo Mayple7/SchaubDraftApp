@@ -649,7 +649,7 @@ public class DraftTimerScript : MonoBehaviour
 		}
 
 		// Grab the pick text and clear the textbox.
-		GameObject.Find("AlreadyPickedController").GetComponent<AlreadyPickedController>().AddPickToHistory(currentPickedPlayer);
+		GameObject.Find("AlreadyPickedController").GetComponent<AlreadyPickedController>().AddPickToHistory(currentPickedPlayer, currentRound, currentPick);
 
 		textBoxObject.GetComponent<InputField>().text = "";
 		textBoxObject.GetComponent<InputPickScript>().Hide();

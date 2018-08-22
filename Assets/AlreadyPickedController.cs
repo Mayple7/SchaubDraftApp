@@ -51,10 +51,13 @@ public class AlreadyPickedController : MonoBehaviour
 
 	private List<PlayerDatabase.PlayerData> pickHistory = new List<PlayerDatabase.PlayerData>();
 
+	private BreakingNewsScript breakingNews;
+
 	// Use this for initialization
 	void Start ()
 	{
 		timerScript = GameObject.Find("DraftTimer").GetComponent<DraftTimerScript>();
+		breakingNews = GameObject.Find("BreakingNews").GetComponent<BreakingNewsScript>();
 	}
 	
 	// Update is called once per frame
@@ -98,8 +101,29 @@ public class AlreadyPickedController : MonoBehaviour
 		}
 	}
 
-	public void AddPickToHistory(PlayerDatabase.PlayerData playerData)
+	public void AddPickToHistory(PlayerDatabase.PlayerData playerData, int currentRound, int currentPick)
 	{
+		// Skip pick grades for defenses and kickers (they don't work well)
+		if (playerData.position != PlayerDatabase.Position.DEF && playerData.position != PlayerDatabase.Position.K)
+		{
+			// Check pick grade
+			int expectedPlayerRank = (currentRound + 3) * (int)DrafterEnum.TotalDrafters + currentPick + 1;
+
+			int pickGrade = expectedPlayerRank - (int)playerData.overallRank;
+			// Draft Steal!
+			if (pickGrade > 30)
+			{
+				this.breakingNews.AddNewsToTicker(timerScript.GetCurrentDrafter(), playerData.playerName, true);
+				print("Draft Steal!: " + playerData.playerName + " : " + pickGrade);
+			}
+			// Draft Reach!
+			else if (pickGrade < -24)
+			{
+				this.breakingNews.AddNewsToTicker(timerScript.GetCurrentDrafter(), playerData.playerName, false);
+				print("Reach Pick: " + playerData.playerName + " : " + pickGrade);
+			}
+		}
+		
 		this.pickHistory.Insert(0, playerData);
 		
 		// Keep history to max of 5 names.

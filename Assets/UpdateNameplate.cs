@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using DG.Tweening;
 
 public class UpdateNameplate : MonoBehaviour
@@ -11,9 +9,9 @@ public class UpdateNameplate : MonoBehaviour
 		WR,
 		QB,
 		Flex1,	// RB,WR,TE
-		DEF,
 		RBBackup,
 		WRBackup,
+		DEF,
 		QBBackup,
 		FlexBackup, // RB,WR,TE
 		K,
@@ -117,18 +115,8 @@ public class UpdateNameplate : MonoBehaviour
 				continue;
 			}
 
-			// 0 WRs on roster
-			if(positionTagIndex <= (int)PositionImportance.WR && rosterSlots[(int)PositionImportance.WR] == 0)
-			{
-				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingStarterSlot;
-				positionTags[i].GetComponentInChildren<TextMesh>().text = "WR";
-				positionTags[i].transform.DOMoveY(showYPosition, timerScript.quickAnimationTime).SetDelay(delayAmount);
-				positionTagIndex = (int)PositionImportance.WR + 1;
-				continue;
-			}
-
-			// 1 WR on roster
-			if (positionTagIndex <= (int)PositionImportance.WR && rosterSlots[(int)PositionImportance.WR] == 1)
+			// 0 or 1 WRs on roster
+			if(positionTagIndex <= (int)PositionImportance.WR && rosterSlots[(int)PositionImportance.WR] <= 1)
 			{
 				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingStarterSlot;
 				positionTags[i].GetComponentInChildren<TextMesh>().text = "WR";
@@ -147,33 +135,13 @@ public class UpdateNameplate : MonoBehaviour
 				continue;
 			}
 
-			// No Flex1 starters on roster
-			if (positionTagIndex <= (int)PositionImportance.Flex1 && rosterSlots[(int)PositionImportance.Flex1] == 0)
+			// 0 or 1 Flex starters on roster
+			if (positionTagIndex <= (int)PositionImportance.Flex1 && rosterSlots[(int)PositionImportance.Flex1] <= 1)
 			{
 				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingStarterSlot;
 				positionTags[i].GetComponentInChildren<TextMesh>().text = "Flex";
 				positionTags[i].transform.DOMoveY(showYPosition, timerScript.quickAnimationTime).SetDelay(delayAmount);
 				positionTagIndex = (int)PositionImportance.Flex1 + 1;
-				continue;
-			}
-
-			// One Flex1 starters on roster
-			if (positionTagIndex <= (int)PositionImportance.Flex1 && rosterSlots[(int)PositionImportance.Flex1] == 1)
-			{
-				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingStarterSlot;
-				positionTags[i].GetComponentInChildren<TextMesh>().text = "Flex";
-				positionTags[i].transform.DOMoveY(showYPosition, timerScript.quickAnimationTime).SetDelay(delayAmount);
-				positionTagIndex = (int)PositionImportance.Flex1 + 1;
-				continue;
-			}
-
-			// No DEF starters on roster
-			if (positionTagIndex <= (int)PositionImportance.DEF && rosterSlots[(int)PositionImportance.DEF] == 0)
-			{
-				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingStarterSlot;
-				positionTags[i].GetComponentInChildren<TextMesh>().text = "DEF";
-				positionTags[i].transform.DOMoveY(showYPosition, timerScript.quickAnimationTime).SetDelay(delayAmount);
-				positionTagIndex = (int)PositionImportance.DEF + 1;
 				continue;
 			}
 
@@ -197,6 +165,16 @@ public class UpdateNameplate : MonoBehaviour
 				continue;
 			}
 
+			// No DEF starters on roster
+			if (positionTagIndex <= (int)PositionImportance.DEF && rosterSlots[(int)PositionImportance.DEF] == 0)
+			{
+				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingStarterSlot;
+				positionTags[i].GetComponentInChildren<TextMesh>().text = "DEF";
+				positionTags[i].transform.DOMoveY(showYPosition, timerScript.quickAnimationTime).SetDelay(delayAmount);
+				positionTagIndex = (int)PositionImportance.DEF + 1;
+				continue;
+			}
+
 			// No QB backups on roster
 			if (positionTagIndex <= (int)PositionImportance.QBBackup && rosterSlots[(int)PositionImportance.QBBackup] == 0)
 			{
@@ -208,17 +186,7 @@ public class UpdateNameplate : MonoBehaviour
 			}
 
 			// No Flex backups on roster
-			if (positionTagIndex <= (int)PositionImportance.FlexBackup && rosterSlots[(int)PositionImportance.FlexBackup] == 0)
-			{
-				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingBackupSlot;
-				positionTags[i].GetComponentInChildren<TextMesh>().text = "Flex";
-				positionTags[i].transform.DOMoveY(showYPosition, timerScript.quickAnimationTime).SetDelay(delayAmount);
-				positionTagIndex = (int)PositionImportance.FlexBackup + 1;
-				continue;
-			}
-
-			// No Flex backups on roster
-			if (positionTagIndex <= (int)PositionImportance.FlexBackup && rosterSlots[(int)PositionImportance.FlexBackup] == 1)
+			if (positionTagIndex <= (int)PositionImportance.FlexBackup && rosterSlots[(int)PositionImportance.FlexBackup] <= 1)
 			{
 				positionTags[i].GetComponent<SpriteRenderer>().sprite = MissingBackupSlot;
 				positionTags[i].GetComponentInChildren<TextMesh>().text = "Flex";
@@ -288,12 +256,6 @@ public class UpdateNameplate : MonoBehaviour
 				autopickPlayer = TE.playerName;
 			}
 		}
-		// No DEF starters on roster
-		else if (rosterSlots[(int)PositionImportance.DEF] == 0)
-		{
-			// Get the top DEF
-			autopickPlayer = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.DEF)[0].playerName;
-		}
 		// No RB backups on roster
 		else if (rosterSlots[(int)PositionImportance.RBBackup] == 0)
 		{
@@ -305,6 +267,12 @@ public class UpdateNameplate : MonoBehaviour
 		{
 			// Get the top WR
 			autopickPlayer = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.WR)[0].playerName;
+		}
+		// No DEF starters on roster
+		else if (rosterSlots[(int)PositionImportance.DEF] == 0)
+		{
+			// Get the top DEF
+			autopickPlayer = timerScript.playerDatabase.GetBestPositionPlayers(PlayerDatabase.Position.DEF)[0].playerName;
 		}
 		// No QB backups on roster
 		else if (rosterSlots[(int)PositionImportance.QBBackup] == 0)
@@ -390,7 +358,7 @@ public class UpdateNameplate : MonoBehaviour
 				{
 					++rosterSlots[(int)PositionImportance.WR];
 				}
-				else if(rosterSlots[(int)PositionImportance.Flex1] <= 0)
+				else if(rosterSlots[(int)PositionImportance.Flex1] <= 1)
 				{
 					++rosterSlots[(int)PositionImportance.Flex1];
 				}
