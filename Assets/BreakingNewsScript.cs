@@ -132,6 +132,8 @@ public class BreakingNewsScript : MonoBehaviour
 	private void AnimateInBreakingNews()
 	{
 		this.parentNewsTicker.transform.DOMoveY(0, this.breakingNewsAnimateTime).OnComplete(() => this.SetNextNewsState(BreakingNewsTickerState.AnimateTicker));
+
+		this.parentNewsTicker.GetComponent<AudioSource>().Play();
 	}
 
 	private void BeginAnimateNewsTicker()

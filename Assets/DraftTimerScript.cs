@@ -584,6 +584,11 @@ public class DraftTimerScript : MonoBehaviour
 		textBoxObject.GetComponent<InputPickScript>().Show();
 		confirmPickButton.GetComponent<ConfirmPickButton>().Show();
 
+		// Play dat sound.
+		if (!this.GetComponent<AudioSource>().isPlaying)
+		{
+			this.GetComponent<AudioSource>().Play();
+		}
 	}
 
 	// Pick has been confirmed with button press
