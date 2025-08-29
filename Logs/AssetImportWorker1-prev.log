@@ -1,0 +1,364 @@
+Using pre-set license
+Built from '2022.3/staging' branch; Version is '2022.3.8f1 (b5eafc012955) revision 11922172'; Using compiler version '192829333'; Build Type 'Release'
+OS: 'Windows 10  (10.0.19045) 64bit Professional' Language: 'en' Physical Memory: 32538 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 1
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity 2022.3.8f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker1
+-projectPath
+D:/Unity Projects/SchaubDraftApp
+-logFile
+Logs/AssetImportWorker1.log
+-srvPort
+56593
+Successfully changed project path to: D:/Unity Projects/SchaubDraftApp
+D:/Unity Projects/SchaubDraftApp
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gfx=262144"
+Player connection [22368] Host "[IP] 192.168.1.181 [Port] 0 [Flags] 2 [Guid] 566019391 [EditorId] 566019391 [Version] 1048832 [Id] WindowsEditor(7,Mayple-Desktop) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
+
+Player connection [22368] Host "[IP] 192.168.1.181 [Port] 0 [Flags] 2 [Guid] 566019391 [EditorId] 566019391 [Version] 1048832 [Id] WindowsEditor(7,Mayple-Desktop) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
+
+[Physics::Module] Initialized MultithreadedJobDispatcher with 23 workers.
+Refreshing native plugins compatible for Editor in 13.90 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2022.3.8f1 (b5eafc012955)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity 2022.3.8f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/Unity Projects/SchaubDraftApp/Assets
+GfxDevice: creating device client; threaded=0; jobified=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3070 Ti (ID=0x2482)
+    Vendor:   NVIDIA
+    VRAM:     8032 MB
+    Driver:   31.0.15.4601
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity 2022.3.8f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity 2022.3.8f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity 2022.3.8f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56332
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity 2022.3.8f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.007331 seconds.
+- Loaded All Assemblies, in  0.318 seconds
+Native extension for WindowsStandalone target not found
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.223 seconds
+Domain Reload Profiling: 539ms
+	BeginReloadAssembly (103ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (31ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (55ms)
+	LoadAllAssembliesAndSetupDomain (117ms)
+		LoadAssemblies (100ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (115ms)
+			TypeCache.Refresh (114ms)
+				TypeCache.ScanAssembly (102ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (0ms)
+	FinalizeReload (224ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (173ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (8ms)
+			SetLoadedEditorAssemblies (6ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (2ms)
+			ProcessInitializeOnLoadAttributes (113ms)
+			ProcessInitializeOnLoadMethodAttributes (44ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+========================================================================
+Worker process is ready to serve import requests
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.522 seconds
+Refreshing native plugins compatible for Editor in 9.84 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.594 seconds
+Domain Reload Profiling: 1114ms
+	BeginReloadAssembly (115ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (5ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (19ms)
+	RebuildCommonClasses (29ms)
+	RebuildNativeTypeToScriptingClass (10ms)
+	initialDomainReloadingComplete (39ms)
+	LoadAllAssembliesAndSetupDomain (327ms)
+		LoadAssemblies (278ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (109ms)
+			TypeCache.Refresh (89ms)
+				TypeCache.ScanAssembly (73ms)
+			ScanForSourceGeneratedMonoScriptInfo (16ms)
+			ResolveRequiredComponents (3ms)
+	FinalizeReload (595ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (467ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (6ms)
+			SetLoadedEditorAssemblies (3ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (52ms)
+			ProcessInitializeOnLoadAttributes (256ms)
+			ProcessInitializeOnLoadMethodAttributes (141ms)
+			AfterProcessingInitializeOnLoad (8ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (8ms)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
+Refreshing native plugins compatible for Editor in 9.57 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2614 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 80 unused Assets / (178.6 KB). Loaded Objects now: 3040.
+Memory consumption went from 115.0 MB to 114.8 MB.
+Total: 5.776800 ms (FindLiveObjects: 0.191600 ms CreateObjectMapping: 0.055900 ms MarkObjects: 5.344200 ms  DeleteObjects: 0.183800 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:CustomObjectIndexerAttribute: 756ad292c208cfabdd7b50bc23989ffe -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+========================================================================
+Received Import Request.
+  Time since last request: 101269.748199 seconds.
+  path: Assets/Joke/Zindol.jpg
+  artifactKey: Guid(0096f8934681ece4883c42195edb7585) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Joke/Zindol.jpg using Guid(0096f8934681ece4883c42195edb7585) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2adae3a7a9ac11d8c8191cc41ed81377') in 0.133154 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 13.752526 seconds.
+  path: Assets/NFLTeamBackgrounds/DETBackground.png
+  artifactKey: Guid(313b7e774a841a3428e7a0f70185a9c1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/DETBackground.png using Guid(313b7e774a841a3428e7a0f70185a9c1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '784da1091400dcecdf18e2c76ef8be7a') in 0.057681 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 13.951363 seconds.
+  path: Assets/NFLTeamBackgrounds/CLEBackground.png
+  artifactKey: Guid(51eff56819dae434296afe1d0284f51f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/CLEBackground.png using Guid(51eff56819dae434296afe1d0284f51f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f5eceba73406603f8b6ead31405d58f3') in 0.068098 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 11.176905 seconds.
+  path: Assets/NFLTeamBackgrounds/LACBackground.png
+  artifactKey: Guid(86b8aa5a86cf29c4ca61b3f94fd205e9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/LACBackground.png using Guid(86b8aa5a86cf29c4ca61b3f94fd205e9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd07ab3fddc46e3e4d850c6adccd55114') in 0.034580 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000012 seconds.
+  path: Assets/NFLTeamBackgrounds/LARBackground.png
+  artifactKey: Guid(b8b24987923c9d143ba1c316bbcee385) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/LARBackground.png using Guid(b8b24987923c9d143ba1c316bbcee385) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b83d7c9a62c47251f7bf42300368d3e9') in 0.028196 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000012 seconds.
+  path: Assets/NFLTeamBackgrounds/LVBackground.png
+  artifactKey: Guid(b1a2aa230caf1e849a903c2415d641e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/LVBackground.png using Guid(b1a2aa230caf1e849a903c2415d641e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c53aa634bcaec39bcef03623b12a34ca') in 0.028976 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 7.472679 seconds.
+  path: Assets/NFLTeamBackgrounds/PHIBackground.png
+  artifactKey: Guid(bbf069dece253c94a9738d403df7d682) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/PHIBackground.png using Guid(bbf069dece253c94a9738d403df7d682) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bf61f148efd8207ed3af3f1af64d2401') in 0.031241 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 10.134665 seconds.
+  path: Assets/Joke/JadeToken.png
+  artifactKey: Guid(c83f57cb867b0f541bf6ac1e04795c71) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Joke/JadeToken.png using Guid(c83f57cb867b0f541bf6ac1e04795c71) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ee6368fe29958204d5de51e8de9deaf4') in 0.089508 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.844337 seconds.
+  path: Assets/NFLTeamBackgrounds/SFBackground.png
+  artifactKey: Guid(7afdf5b75729882419532b20cf35ec7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/SFBackground.png using Guid(7afdf5b75729882419532b20cf35ec7c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '658ccf44f0339920fcfcf9608074c59e') in 0.015538 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000013 seconds.
+  path: Assets/NFLTeamBackgrounds/TBBackground.png
+  artifactKey: Guid(cd50d6f2452ea2642b6ce5320dc40995) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/TBBackground.png using Guid(cd50d6f2452ea2642b6ce5320dc40995) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7394e1426340d60103b407df783353d8') in 0.014519 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 3.290573 seconds.
+  path: Assets/Joke/Strahd.png
+  artifactKey: Guid(213d1fb2f48cbc044afe83bf02231be7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Joke/Strahd.png using Guid(213d1fb2f48cbc044afe83bf02231be7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'aa2894a3235efb016a4c7c852b11f2e2') in 0.023501 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 8.011037 seconds.
+  path: Assets/NFLTeamBackgrounds/GBBackground.png
+  artifactKey: Guid(a2f7502e15b91764a867d8d6545ee9e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/GBBackground.png using Guid(a2f7502e15b91764a867d8d6545ee9e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5ff9eaebdc11037eb420cbef3c0b1bc7') in 0.014787 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000013 seconds.
+  path: Assets/NFLTeamBackgrounds/INDBackground.png
+  artifactKey: Guid(dd5dd408f1fce6c489675171d819b15c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/INDBackground.png using Guid(dd5dd408f1fce6c489675171d819b15c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '80a8cf0497b75ec0583d3df6d789fba0') in 0.014223 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000012 seconds.
+  path: Assets/NFLTeamBackgrounds/JACBackground.png
+  artifactKey: Guid(90c799fee046dcf4fa2e0482ec3351df) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/NFLTeamBackgrounds/JACBackground.png using Guid(90c799fee046dcf4fa2e0482ec3351df) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '00bc9afb7409d556918c6e9c7c2e94e4') in 0.014162 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Prepare
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.599 seconds
+Refreshing native plugins compatible for Editor in 9.75 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.850 seconds
+Domain Reload Profiling: 1447ms
+	BeginReloadAssembly (311ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (5ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (31ms)
+	RebuildCommonClasses (28ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (29ms)
+	LoadAllAssembliesAndSetupDomain (219ms)
+		LoadAssemblies (284ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (11ms)
+			TypeCache.Refresh (6ms)
+				TypeCache.ScanAssembly (0ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (4ms)
+	FinalizeReload (851ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (469ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (7ms)
+			SetLoadedEditorAssemblies (3ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (56ms)
+			ProcessInitializeOnLoadAttributes (248ms)
+			ProcessInitializeOnLoadMethodAttributes (146ms)
+			AfterProcessingInitializeOnLoad (9ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (8ms)
+Refreshing native plugins compatible for Editor in 10.25 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2582 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 71 unused Assets / (151.4 KB). Loaded Objects now: 3053.
+Memory consumption went from 112.8 MB to 112.6 MB.
+Total: 5.623900 ms (FindLiveObjects: 0.186900 ms CreateObjectMapping: 0.057200 ms MarkObjects: 5.191300 ms  DeleteObjects: 0.187300 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:CustomObjectIndexerAttribute: 756ad292c208cfabdd7b50bc23989ffe -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+TcpMessagingSession - receive error: operation aborted. errorcode: 995, details: The I/O operation has been aborted because of either a thread exit or an application request.
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0
